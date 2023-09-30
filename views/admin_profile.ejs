@@ -1,62 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
+<link rel="stylesheet" type="text/css" href="/css/admin_profile.css">
+<h1>
+    <%= title %>
+</h1>
+<% if(locals.user){ %>
+    <h3>Add Inventory</h3>
+    <form action="/inventory/add" method="POST">
+        <input type="text" name="medicine_id" placeholder="Medicine ID" required>
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="date" name="exp_dat" placeholder="Expiry Date" required>
+        <input type="number" name="stock" placeholder="Stock Unit" required>
+        <input type="text" name="price" placeholder="Price" required>
+        <input type="submit" value="Add">
+    </form>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
-</head>
-
-<body>
-    <h1>
-        <%= title %>
-    </h1>
-    <% if(locals.user){ %>
-        <a href="/admin/sign-out">Sign Out</a>
-        <h3>Add Inventory</h3>
-        <form action="/inventory/add" method="POST">
-            <input type="text" name="medicine_id" placeholder="Medicine ID" required>
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="date" name="exp_dat" placeholder="Expiry Date" required>
-            <input type="number" name="stock" placeholder="Stock Unit" required>
-            <input type="text" name="price" placeholder="Price" required>
-            <input type="submit" value="Add">
-        </form>
-
-        <table border="1" style="text-align: center;">
-            <thead>
-                <th>Medicine ID</th>
-                <th>Name</th>
-                <th>Stock</th>
-                <th>Price(per Unit)</th>
-                <th>Expiry Date</th>
-            </thead>
-            <tbody>
-                <% for(info of data){%>
-                    <tr>
-                        <td>
-                            <%= info.medicine_id %>
-                        </td>
-                        <td>
-                            <%= info.name%>
-                        </td>
-                        <td>
-                            <%= info.stock %>
-                        </td>
-                        <td>
-                            Rs. <%= info.price %>
-                        </td>
-                        <td>
-                            <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
-                                day: 'numeric' }) %>
-                        </td>
-                    </tr>
-                    <% } %>
-            </tbody>
-        </table>
-        <% } %>
-</body>
-
-</html>
+    <table border="1" style="text-align: center;">
+        <thead>
+            <th>Medicine ID</th>
+            <th>Name</th>
+            <th>Stock</th>
+            <th>Price(per Unit)</th>
+            <th>Expiry Date</th>
+        </thead>
+        <tbody>
+            <% for(info of data){%>
+                <tr>
+                    <td>
+                        <%= info.medicine_id %>
+                    </td>
+                    <td>
+                        <%= info.name%>
+                    </td>
+                    <td>
+                        <%= info.stock %>
+                    </td>
+                    <td>
+                        Rs. <%= info.price %>
+                    </td>
+                    <td>
+                        <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
+                            day: 'numeric' }) %>
+                    </td>
+                </tr>
+                <% } %>
+        </tbody>
+    </table>
+    <% } %>

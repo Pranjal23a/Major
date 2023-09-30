@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+</head>
+
+<body>
+    <h1>
+        <%= title %>
+    </h1>
+    <% if(locals.user){ %>
+        <a href="/admin/sign-out">Sign Out</a>
+        <p>
+            <%= user.name%>
+        </p>
+
+        <a href="/admin/staff/sign-up"><button>Staff Sign Up</button></a>
+        <br><br>
+        <% } %>
+</body>
+
+</html>

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-const path = require('path');
 
-const userSchema = new mongoose.Schema(
+const adminSchema = new mongoose.Schema(
     {
         email: {
             type: String,
@@ -18,10 +17,10 @@ const userSchema = new mongoose.Schema(
         }
     },
     {
-        timestamp: true,
+        timestamps: true,
     }
 );
 
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+const Admin = mongoose.model('Admin', adminSchema);
+module.exports = Admin;

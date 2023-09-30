@@ -7,12 +7,15 @@
     <title>
         <%= title %>
     </title>
+    <%- style %>
 </head>
 
 <body>
-    <h1>
-        <%= title %>
-    </h1>
+    <%- include('_header.ejs'); %>
+        <%- body %>
+            <%- include('_footer.ejs'); %>
+
+                <%- script %>
 </body>
 
 </html>

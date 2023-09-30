@@ -1,0 +1,9 @@
+<h1>
+    <%= title %>
+</h1>
+<% if(locals.user){ %>
+    <a href="/staff/sign-out">Sign Out</a>
+    <p>
+        <%= user.name%>
+    </p>
+    <% } %>

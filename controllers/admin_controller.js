@@ -1,13 +1,16 @@
 const Admin = require('../models/admin');
+const Inventory = require('../models/inventory');
 
 // Admin proflie page
 module.exports.profile = async function (req, res) {
     const User = await Admin.findOne({ _id: req.user.id });
-
+    let data = await Inventory.find({});
     // Check for admin login
     if (User) {
         return res.render('admin_profile', {
             title: 'Admin Profile',
+            user: User,
+            data: data
         });
     }
     else {

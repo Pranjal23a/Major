@@ -6,9 +6,10 @@ const LocalStrategy = require('passport-local').Strategy;
 // Authentication using passport
 passport.use(new LocalStrategy(
     {
-        usernameField: "email"
+        usernameField: "email",
+        passReqToCallback: true
     },
-    async function (email, password, done) {
+    async function (req, email, password, done) {
         try {
             // Try to find the user in both admin and staff collections
             const adminUser = await Admin.findOne({ email: email });
@@ -25,10 +26,11 @@ passport.use(new LocalStrategy(
             }
 
             // Invalid Username/Password for both admin and staff
+            req.flash('error', 'Invalid Username/Password');
             console.log('Invalid Username/Password');
             return done(null, false);
         } catch (err) {
-            console.log('Error in finding user --> passport', err);
+            req.flash('error', err);
             return done(err);
         }
     })

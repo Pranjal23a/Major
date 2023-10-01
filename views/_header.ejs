@@ -1,6 +1,13 @@
 <header>
     Header
     <% if(locals.user){ %>
-        <a href="/admin/sign-out">Sign Out</a>
+        <!-- ye sab ek dropdown mai de dio header ke -->
+        <li><a href="/admin/sign-out">Sign Out</a></li>
+        <li>
+            <%= locals.user.name %>
+        </li>
+        <li>
+            <%= locals.user.email %>
+        </li>
         <% } %>
 </header>

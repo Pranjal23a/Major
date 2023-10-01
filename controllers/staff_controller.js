@@ -1,17 +1,47 @@
 const Staff = require('../models/staff');
-
+const Inventory = require('../models/inventory');
 // Staff Profile 
 module.exports.profile = async function (req, res) {
     const User = await Staff.findOne({ _id: req.user.id });
-
+    let data = await Inventory.find({});
     // Check for admin login
     if (User) {
         return res.render('staff_profile', {
             title: 'Staff Profile',
+            user: User,
+            data: data
         });
     }
     else {
         return res.redirect('/');
+    }
+}
+module.exports.Showsearch = async function (req, res) {
+    const User = await Staff.findOne({ _id: req.user.id });
+    let data = await Inventory.find({});
+    // Check for admin login
+    if (User) {
+        return res.render('staff_search_inventory', {
+            title: 'Staff Profile',
+            user: User,
+            data: data
+        });
+    }
+    else {
+        return res.redirect('/');
+    }
+}
+module.exports.search = async function (req, res) {
+    try {
+        const searchQuery = req.params.name;
+        const searchResults = await Inventory.find({ name: { $regex: searchQuery, $options: 'i' } });
+
+        // In staff_controller.js
+        // Send the search results as JSON
+        return res.json(searchResults);
+    } catch (err) {
+        console.error('Error in search:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
@@ -24,8 +54,10 @@ module.exports.create = async function (req, res) {
         const user = await Staff.findOne({ email: req.body.email });
         if (!user) {
             await Staff.create(req.body);
+            req.flash('success', 'Staff ID Created Successfully!!');
             return res.redirect("/admin/profile");
         } else {
+            req.flash('error', 'Staff Already Exists!!');
             throw new Error("User already exists");
         }
     } catch (err) {
@@ -55,6 +87,7 @@ module.exports.signIn = function (req, res) {
 
 // creating session for staff on signin
 module.exports.createSession = async function (req, res) {
+    req.flash('success', 'You Have SignIn Successfully!!');
     return res.redirect('/staff/profile');
 }
 
@@ -67,6 +100,7 @@ module.exports.destroySession = async function (req, res) {
             console.log(err);
             return res.redirect("/"); // or handle the error in an appropriate way
         }
+        req.flash('error', 'Logged Out Successfully!!');
         return res.redirect("/");
     });
 };

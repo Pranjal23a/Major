@@ -1,7 +1,15 @@
 <link rel="stylesheet" type="text/css" href="/css/staff_signin.css">
-<h1>Staff Sign-In</h1>
-<form action="/staff/create-session" method="POST">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <input type="submit" value="Sign-In">
-</form>
+<div class="main-container">
+    <div class="title-edit">
+        <h1>Staff Sign-In</h1>
+    </div>
+    <div class="form-container">
+        <form action="/staff/create-session" method="POST">
+            <div class="form-style">
+                <input class="form-style-place" type="email" name="email" placeholder="Email" required>
+                <input class="form-style-place" type="password" name="password" placeholder="Password" required>
+                <input class="enter" type="submit" value="Sign-In">
+            </div>
+        </form>
+    </div>
+</div>

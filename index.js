@@ -5,6 +5,8 @@ const expressLayouts = require('express-ejs-layouts'); // For using layouts
 const db = require('./config/mongoose'); // Connecting to database
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
+const flash = require('connect-flash');
+const flashMware = require('./config/middleware');
 app.use(cors());
 
 // Used for session cookie
@@ -56,6 +58,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.setAuthenticatedUser);
 
+app.use(flash());
+app.use(flashMware.setFlash);
 
 // Here basically we are using routes index file after coming in this file
 app.use('/', require('./routes/index'));

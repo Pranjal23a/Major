@@ -1,6 +1,75 @@
 <header>
-    Header
-    <% if(locals.user){ %>
-        <a href="/admin/sign-out">Sign Out</a>
-        <% } %>
+    <nav class="top-nav">
+        <div class="top-nav-container">
+            <div class="top-nav-contact">
+                <a href="#"><i class="fas fa-envelope"></i> shiprash@gmail.com</a>
+                <a href="#"><i class="fas fa-phone"></i> +91 981727187</a>
+                <a href="#"><i class="fas fa-phone"></i> +91 983772187</a>
+
+            </div>
+
+            <div class="top-nav-details">
+                <a href="#"><span>Newsletter |</span></a>
+                <a href="#"><span>Appointment |</span></a>
+                <a href="#"><span>Career |</span></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i> </a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+
+
+    </nav>
+    <section class="top">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid" id="company-logo">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#" style="color: white; ">
+                        <p style="font-size: 80%;">🆂🅷🅸🅿🆁🅰🆂🅷</p>
+                    </a>
+                </div>
+
+                <h2 class="" style="color: white; padding-right: 25%;">SMART HOSPITAL MANAGMENT SYSTEM</h2>
+
+
+
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                    <div class="dropdow-name">
+                        <% if(locals.user){ %>
+                            <div class="dropdown-container">
+                                <div class="container">
+                                    <div class="custom-dropdown">
+                                        <button class="btn btn-secondary" id="dropdownToggle" type="button">
+                                            <li>
+                                                <%= locals.user.name %>
+                                            </li>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-up"
+                                            aria-labelledby="dropdownToggle">
+                                            <a class="dropdown-item" href="/admin/sign-out">Sign Out</a>
+                                            <li class="dropdown-item">
+                                                <%= locals.user.email %>
+                                            </li>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </section>
+
 </header>

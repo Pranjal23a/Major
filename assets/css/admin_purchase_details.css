@@ -1,0 +1,50 @@
+.main-container{
+    min-height: 40rem;
+    font-family: "monserat";
+    /* padding: 15rem; */
+    
+    background-image: url('/images/background.jpg');  /* Replace 'your-image.jpg' with the path to your image */
+    background-size: cover; /* Adjust this property as needed */
+    background-repeat: no-repeat;
+    background-position: center center;
+    padding-bottom: 3rem;
+    
+
+}
+
+.title-edit{
+    text-align: center;
+    padding-top: 4.5rem;
+    padding-bottom: 2rem;
+}
+.title-edit h1{
+    font-size: 2.5rem;
+    font-weight: 550;
+    color: black;
+    word-spacing: 0.1rem;
+    letter-spacing: 0.05rem;
+
+    
+}
+
+table {
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Style the table header */
+th {
+    background-color: white ;    
+    color: black;
+    padding: 10px;
+}
+
+/* Style the table cells */
+td {
+    padding: 8px;
+}
+
+/* Alternate row background color for better readability */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}

@@ -1,4 +1,5 @@
 <header>
+<<<<<<< HEAD
     <nav class="top-nav">
         <div class="top-nav-container">
             <div class="top-nav-contact">
@@ -72,4 +73,17 @@
 
     </section>
 
+=======
+    Header
+    <% if(locals.user){ %>
+        <!-- ye sab ek dropdown mai de dio header ke -->
+        <li><a href="/admin/sign-out">Sign Out</a></li>
+        <li>
+            <%= locals.user.name %>
+        </li>
+        <li>
+            <%= locals.user.email %>
+        </li>
+        <% } %>
+>>>>>>> d5a76b7c95bd7964c9c5d83adc229b1148c3d404
 </header>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <link rel="stylesheet" type="text/css" href="/css/admin_purchase_details.css">
 <% if(locals.user){ %>
     <div class="main-container">
@@ -92,3 +93,46 @@
      });
 </script>
          
+=======
+<% if(locals.user){ %>
+    <a href=" /admin/profile"><button>Add Inventory</button></a>
+    <a href=" /admin/search"><button>Search Inventory</button></a>
+    <a href=" /admin/profile/selldata"><button>Purchase Details</button></a>
+    <h1>purchase details</h1>
+    <table border="1" style="text-align: center;">
+        <thead>
+            <th>Medicine ID</th>
+            <th>Name</th>
+            <th>Unit Sell</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Sell By</th>
+        </thead>
+        <tbody>
+            <% for(info of data){%>
+                <tr>
+                    <td>
+                        <%= info.medicine_id %>
+                    </td>
+                    <td>
+                        <%= info.name%>
+                    </td>
+                    <td>
+                        <%= info.unit %>
+                    </td>
+                    <td>
+                        Rs. <%= info.amount %>
+                    </td>
+                    <td>
+                        <%= new Date(info.date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
+                            day: 'numeric' }) %>
+                    </td>
+                    <td>
+                        <%= info.user.name %>
+                    </td>
+                </tr>
+                <% } %>
+        </tbody>
+    </table>
+    <% } %>
+>>>>>>> d5a76b7c95bd7964c9c5d83adc229b1148c3d404

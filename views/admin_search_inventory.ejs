@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <link rel="stylesheet" type="text/css" href="/css/admin_search_inventory.css">
 <% if(locals.user){ %>
     <!-- isko bhi side mai as a list add krio -->
@@ -77,6 +78,52 @@
                 </tbody>
             </table>
         </div>
+=======
+<% if(locals.user){ %>
+    <!-- isko bhi side mai as a list add krio -->
+    <a href=" /admin/profile"><button>Add Inventory</button></a>
+    <a href=" /admin/search"><button>Search Inventory</button></a>
+    <a href=" /admin/profile/selldata"><button>Purchase Details</button></a>
+
+    <h2>Search Inventory</h2>
+    <form id="search-form">
+        <input type="text" id="search-query" placeholder="Medicine Name" required>
+        <input type="submit" value="Search">
+    </form>
+
+    <div id="search-results">
+        <table border="1" style="text-align: center;">
+            <thead>
+                <th>Medicine ID</th>
+                <th>Name</th>
+                <th>Stock</th>
+                <th>Price(per Unit)</th>
+                <th>Expiry Date</th>
+            </thead>
+            <tbody>
+                <% for(info of data){%>
+                    <tr>
+                        <td>
+                            <%= info.medicine_id %>
+                        </td>
+                        <td>
+                            <%= info.name%>
+                        </td>
+                        <td>
+                            <%= info.stock %> U
+                        </td>
+                        <td>
+                            Rs. <%= info.price %>
+                        </td>
+                        <td style="<%=checkExpiration(info.exp_date) %>">
+                            <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
+                                day: 'numeric' }) %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+>>>>>>> d5a76b7c95bd7964c9c5d83adc229b1148c3d404
     </div>
 
     <% } %>
@@ -96,10 +143,13 @@
                 }
             }
                 %>
+<<<<<<< HEAD
                 $(document).ready(function () {
             $('#dropdownToggle').click(function () {
                 $('.dropdown-menu').toggle(); // Toggle the display of the dropdown menu
             });
         });
+=======
+>>>>>>> d5a76b7c95bd7964c9c5d83adc229b1148c3d404
         </script>
         <script src="/js/search.js"></script>

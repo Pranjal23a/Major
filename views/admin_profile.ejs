@@ -1,5 +1,4 @@
 <link rel="stylesheet" type="text/css" href="/css/admin_profile.css">
-<<<<<<< HEAD
 <div class="main-container">
     <!-- <div class="title-edit">
         <h1>
@@ -27,6 +26,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href=" /admin/staff/sign-up">Add Staff </button></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href=" /admin/doctor/sign-up">Add Doctor </button></a>
                         </li>
                     </ul>
                 </div>
@@ -59,61 +61,75 @@
                 <a href=" /admin/staff/sign-up"><button> Add Staff </button></a> -->
 
 
-        <div class="title-edit">
-            <h3>Add Inventory</h3>
-        </div>
-        <div class="form-container">
-            <form action="/inventory/add" method="POST">
-                <div class="form-style">
-                    <input class="form-style-place" type="text" name="medicine_id" placeholder="Medicine ID" required>
-                    <input class="form-style-place" type="text" name="name" placeholder="Name" required>
-                    <input class="form-style-place" type="date" name="exp_date" placeholder="Expiry Date" required>
-                    <input class="form-style-place" type="number" name="stock" placeholder="Stock Unit" required>
-                    <input class="form-style-place" type="text" name="price" placeholder="Price" required>
-                    <input class="enter" type="submit" value="Add">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+
+                    <div class="title-edit">
+                        <h3>Add Inventory</h3>
+                    </div>
+                    <div class="form-container">
+                        <form action="/inventory/add" method="POST">
+                            <div class="form-style">
+                                <input class="form-style-place" type="text" name="medicine_id" placeholder="Medicine ID"
+                                    required>
+                                <input class="form-style-place" type="text" name="name" placeholder="Name" required>
+                                <input class="form-style-place" type="date" name="exp_date" placeholder="Expiry Date"
+                                    required>
+                                <input class="form-style-place" type="number" name="stock" placeholder="Stock Unit"
+                                    required>
+                                <input class="form-style-place" type="text" name="price" placeholder="Price" required>
+                                <input class="enter" type="submit" value="Add">
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+                <div class="col">
+                    <table border="1" style="text-align: center;">
+                        <thead>
+                            <th>Sno.</th>
+                            <th>Medicine ID</th>
+                            <th>Name</th>
+                            <th>Stock</th>
+                            <th>Price(per Unit)</th>
+                            <th>Expiry Date</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <% let i=1 %>
+                                <% for(info of data){%>
+                                    <tr>
+                                        <td>
+                                            <%= i %>
+                                        </td>
+                                        <td>
+                                            <%= info.medicine_id %>
+                                        </td>
+                                        <td>
+                                            <%= info.name%>
+                                        </td>
+                                        <td>
+                                            <%= info.stock %>
+                                        </td>
+                                        <td>
+                                            Rs. <%= info.price %>
+                                        </td>
+                                        <td style="<%=checkExpiration(info.exp_date) %>">
+                                            <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' ,
+                                                month: 'short' , day: 'numeric' }) %>
+                                        </td>
+                                        <td><a href="/admin/destroy/<%= info.id %>">X</a></td>
+                                    </tr>
+                                    <%i++ } %>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
         </div>
 
 
-        <table border="1" style="text-align: center;">
-            <thead>
-                <th>Sno.</th>
-                <th>Medicine ID</th>
-                <th>Name</th>
-                <th>Stock</th>
-                <th>Price(per Unit)</th>
-                <th>Expiry Date</th>
-                <th></th>
-            </thead>
-            <tbody>
-                <% let i=1 %>
-                    <% for(info of data){%>
-                        <tr>
-                            <td>
-                                <%= i %>
-                            </td>
-                            <td>
-                                <%= info.medicine_id %>
-                            </td>
-                            <td>
-                                <%= info.name%>
-                            </td>
-                            <td>
-                                <%= info.stock %>
-                            </td>
-                            <td>
-                                Rs. <%= info.price %>
-                            </td>
-                            <td style="<%=checkExpiration(info.exp_date) %>">
-                                <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' ,
-                                    month: 'short' , day: 'numeric' }) %>
-                            </td>
-                            <td><a href="/admin/destroy/<%= info.id %>">X</a></td>
-                        </tr>
-                        <%i++ } %>
-            </tbody>
-        </table>
+
         <% } %>
 
 </div>
@@ -137,79 +153,3 @@
             });
         });
 </script>
-=======
-<h1>
-    <%= title %>
-</h1>
-<% if(locals.user){ %>
-
-    <!-- in buttons ko as a list add krio left side mai -->
-    <a href=" /admin/profile"><button>Add Inventory</button></a>
-    <a href=" /admin/search"><button>Search Inventory</button></a>
-    <a href=" /admin/profile/selldata"><button>Purchase Details</button></a>
-    <h3>Add Inventory</h3>
-    <form action="/inventory/add" method="POST">
-        <input type="text" name="medicine_id" placeholder="Medicine ID" required>
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="date" name="exp_date" placeholder="Expiry Date" required>
-        <input type="number" name="stock" placeholder="Stock Unit" required>
-        <input type="text" name="price" placeholder="Price" required>
-        <input type="submit" value="Add">
-    </form>
-
-    <table border="1" style="text-align: center;">
-        <thead>
-            <th>Sno.</th>
-            <th>Medicine ID</th>
-            <th>Name</th>
-            <th>Stock</th>
-            <th>Price(per Unit)</th>
-            <th>Expiry Date</th>
-            <th></th>
-        </thead>
-        <tbody>
-            <% let i=1 %>
-                <% for(info of data){%>
-                    <tr>
-                        <td>
-                            <%= i %>
-                        </td>
-                        <td>
-                            <%= info.medicine_id %>
-                        </td>
-                        <td>
-                            <%= info.name%>
-                        </td>
-                        <td>
-                            <%= info.stock %>
-                        </td>
-                        <td>
-                            Rs. <%= info.price %>
-                        </td>
-                        <td style="<%=checkExpiration(info.exp_date) %>">
-                            <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
-                                day: 'numeric' }) %>
-                        </td>
-                        <td><a href="/admin/destroy/<%= info.id %>">X</a></td>
-                    </tr>
-                    <%i++ } %>
-        </tbody>
-    </table>
-    <% } %>
-
-
-        <script>
-           <% function checkExpiration(expDate) {
-                var currentDate = new Date();
-                var expirationDate = new Date(expDate);
-                var timeDifference = expirationDate - currentDate;
-                var daysUntilExpiration = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-                if (daysUntilExpiration < 0) {
-                    return " background-color: red;";
-                } else if (daysUntilExpiration <= 30) {
-                    return "background-color: orange;";
-                } else { return ""; }
-            } %>
-        </script>
->>>>>>> d5a76b7c95bd7964c9c5d83adc229b1148c3d404

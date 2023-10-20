@@ -19,6 +19,8 @@ module.exports.profile = async function (req, res) {
     }
 }
 
+
+// Admin Invetory search page
 module.exports.Showsearch = async function (req, res) {
     const User = await Admin.findOne({ _id: req.user.id });
     let data = await Inventory.find({});
@@ -37,11 +39,17 @@ module.exports.Showsearch = async function (req, res) {
 module.exports.search = async function (req, res) {
     try {
         const searchQuery = req.params.name;
-        const searchResults = await Inventory.find({ name: { $regex: searchQuery, $options: 'i' } });
+        if (searchQuery == 0) {
+            const allData = await Inventory.find({});
+            return res.json(allData);
+        }
+        else {
+            const searchResults = await Inventory.find({ name: { $regex: searchQuery, $options: 'i' } });
 
-        // In staff_controller.js
-        // Send the search results as JSON
-        return res.json(searchResults);
+            // In staff_controller.js
+            // Send the search results as JSON
+            return res.json(searchResults);
+        }
     } catch (err) {
         console.error('Error in search:', err);
         return res.status(500).json({ error: 'Internal Server Error' });

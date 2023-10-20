@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <link rel="stylesheet" type="text/css" href="/css/admin_purchase_details.css">
 <% if(locals.user){ %>
     <div class="main-container">
@@ -67,72 +66,28 @@
             </tbody>
         </table>
     </div>
-        <% } %>
-    
-
-
-
-    <script>
-        <% function checkExpiration(expDate) {
-     var currentDate = new Date();
-     var expirationDate = new Date(expDate);
-     var timeDifference = expirationDate - currentDate;
-     var daysUntilExpiration = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-     if (daysUntilExpiration < 0) {
-         return " background-color: red;";
-     } else if (daysUntilExpiration <= 30) {
-         return "background-color: orange;";
-     } else { return ""; }
- } %>
-
-     $(document).ready(function () {
-         $('#dropdownToggle').click(function () {
-             $('.dropdown-menu').toggle(); // Toggle the display of the dropdown menu
-         });
-     });
-</script>
-         
-=======
-<% if(locals.user){ %>
-    <a href=" /admin/profile"><button>Add Inventory</button></a>
-    <a href=" /admin/search"><button>Search Inventory</button></a>
-    <a href=" /admin/profile/selldata"><button>Purchase Details</button></a>
-    <h1>purchase details</h1>
-    <table border="1" style="text-align: center;">
-        <thead>
-            <th>Medicine ID</th>
-            <th>Name</th>
-            <th>Unit Sell</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Sell By</th>
-        </thead>
-        <tbody>
-            <% for(info of data){%>
-                <tr>
-                    <td>
-                        <%= info.medicine_id %>
-                    </td>
-                    <td>
-                        <%= info.name%>
-                    </td>
-                    <td>
-                        <%= info.unit %>
-                    </td>
-                    <td>
-                        Rs. <%= info.amount %>
-                    </td>
-                    <td>
-                        <%= new Date(info.date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
-                            day: 'numeric' }) %>
-                    </td>
-                    <td>
-                        <%= info.user.name %>
-                    </td>
-                </tr>
-                <% } %>
-        </tbody>
-    </table>
     <% } %>
->>>>>>> d5a76b7c95bd7964c9c5d83adc229b1148c3d404
+
+
+
+
+        <script>
+        <% function checkExpiration(expDate) {
+                var currentDate = new Date();
+                var expirationDate = new Date(expDate);
+                var timeDifference = expirationDate - currentDate;
+                var daysUntilExpiration = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+                if (daysUntilExpiration < 0) {
+                    return " background-color: red;";
+                } else if (daysUntilExpiration <= 30) {
+                    return "background-color: orange;";
+                } else { return ""; }
+            } %>
+
+                $(document).ready(function () {
+                    $('#dropdownToggle').click(function () {
+                        $('.dropdown-menu').toggle(); // Toggle the display of the dropdown menu
+                    });
+                });
+        </script>

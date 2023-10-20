@@ -1,6 +1,7 @@
 const passport = require("passport");
 const Admin = require('../models/admin');
 const Staff = require('../models/staff');
+const Doctor = require('../models/doctor');
 const LocalStrategy = require('passport-local').Strategy;
 
 // Authentication using passport
@@ -14,6 +15,7 @@ passport.use(new LocalStrategy(
             // Try to find the user in both admin and staff collections
             const adminUser = await Admin.findOne({ email: email });
             const staffUser = await Staff.findOne({ email: email });
+            const doctorUser = await Doctor.findOne({ email: email });
 
             // Check for admin login
             if (adminUser && adminUser.password === password) {
@@ -23,6 +25,11 @@ passport.use(new LocalStrategy(
             // Check for staff login
             if (staffUser && staffUser.password === password) {
                 return done(null, staffUser);
+            }
+
+            // Check for doctor login
+            if (doctorUser && doctorUser.password === password) {
+                return done(null, doctorUser);
             }
 
             // Invalid Username/Password for both admin and staff
@@ -53,6 +60,11 @@ passport.deserializeUser(async function (id, done) {
         const staffUser = await Staff.findById(id);
         if (staffUser) {
             return done(null, staffUser);
+        }
+
+        const doctorUser = await Doctor.findById(id);
+        if (doctorUser) {
+            return done(null, doctorUser);
         }
         // }
 

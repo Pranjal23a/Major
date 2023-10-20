@@ -1,0 +1,98 @@
+<!-- <link rel="stylesheet" type="text/css" href="/css/doctor_profile.css"> -->
+<% if(locals.user){ %>
+    <div class="main-container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <a class="navbar-brand" href="/doctor/profile">Patient Diagnos</a>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="left-side">
+                <div class="title-edit">
+                    <h3>Patient Information</h3>
+                </div>
+                <form id="patientForm" action="/doctor/add" method="POST" enctype="application/x-www-form-urlencoded">
+                    <div class="form-style">
+                        <input class="form-style-place" placeholder="Patient Name" type="text" name="name" required><br>
+                        <input class="form-style-place" placeholder="Patient Number" type="number" name="number"
+                            required><br>
+                        <input type="hidden" name="canvasImage" id="canvasImage">
+                        <input class="enter" type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+            <div class="right-side">
+                <div id="canvas-container">
+                    <div id="button-container">
+                        <button id="clearCanvas">Clear</button>
+                        <input type="color" id="penColor" value="#ffffff">
+                        <button id="eraserButton">Eraser</button>
+                    </div>
+                    <canvas id="canvas" width="800" height="600" style="background-color: black;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                let isDrawing = false;
+                let isErasing = false;
+                let penColor = '#ffffff';
+
+                $('#canvas').on('mousedown', function (e) {
+                    isDrawing = true;
+                    if (isErasing) {
+                        context.globalCompositeOperation = 'destination-out';
+                    } else {
+                        context.globalCompositeOperation = 'source-over';
+                        context.strokeStyle = penColor;
+                    }
+                    context.lineWidth = 2;
+                    context.lineCap = 'round';
+                    context.beginPath();
+                    context.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                });
+
+                $('#canvas').on('mousemove', function (e) {
+                    if (!isDrawing) return;
+                    context.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                    context.stroke();
+                });
+
+                $('#canvas').on('mouseup', function () {
+                    isDrawing = false;
+                    context.closePath();
+                    const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                    $('#canvasImage').val(dataURL);
+                });
+
+                $('#clearCanvas').on('click', function () {
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                });
+
+                $('#eraserButton').on('click', function () {
+                    isErasing = !isErasing;
+                    if (isErasing) {
+                        $(this).text('Pen Mode').css('background-color', '#ffffff');
+                        context.lineWidth = 20;
+                    } else {
+                        $(this).text('Eraser').css('background-color', '#f5f5f5');
+                        context.lineWidth = 2;
+                    }
+                });
+
+                $('#penColor').on('input', function () {
+                    penColor = $(this).val();
+                });
+            });
+
+        </script>

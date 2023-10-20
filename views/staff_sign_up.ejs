@@ -27,45 +27,43 @@
             </nav>
         </div>
         <%}%>
-            
-                <div class="title-edit">
-                    <h1>Staff Sign-Up</h1>
-                </div>
-                <div class="form-container">
-                    <form action="/admin/staff/create" method="POST">
-                        <div class="form-style">
-                            <input class="form-style-place" type="email" name="email" placeholder="Email" required>
-                            <input class="form-style-place" type="text" name="name" placeholder="Name" required>
-                            <input class="form-style-place" type="password" name="password" placeholder="Password"
-                                required>
-                            <input class="form-style-place" type="password" name="confirm_password"
-                                placeholder="Confirm Password" required>
-                            <input class="enter" type="submit" value="Sign-Up">
-                        </div>
-                    </form>
-                </div>
-            
+
+            <div class="title-edit">
+                <h1>Staff Sign-Up</h1>
+            </div>
+            <div class="form-container">
+                <form action="/admin/staff/create" method="POST">
+                    <div class="form-style">
+                        <input class="form-style-place" type="email" name="email" placeholder="Email" required>
+                        <input class="form-style-place" type="text" name="name" placeholder="Name" required>
+                        <input class="form-style-place" type="password" name="password" placeholder="Password" required>
+                        <input class="form-style-place" type="password" name="confirm_password"
+                            placeholder="Confirm Password" required>
+                        <input class="enter" type="submit" value="Sign-Up">
+                    </div>
+                </form>
+            </div>
+
 
     </div>
 
     <script>
         <% function checkExpiration(expDate) {
-     var currentDate = new Date();
-     var expirationDate = new Date(expDate);
-     var timeDifference = expirationDate - currentDate;
-     var daysUntilExpiration = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            var currentDate = new Date();
+            var expirationDate = new Date(expDate);
+            var timeDifference = expirationDate - currentDate;
+            var daysUntilExpiration = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-     if (daysUntilExpiration < 0) {
-         return " background-color: red;";
-     } else if (daysUntilExpiration <= 30) {
-         return "background-color: orange;";
-     } else { return ""; }
- } %>
+            if (daysUntilExpiration < 0) {
+                return " background-color: red;";
+            } else if (daysUntilExpiration <= 30) {
+                return "background-color: orange;";
+            } else { return ""; }
+        } %>
 
-     $(document).ready(function () {
-         $('#dropdownToggle').click(function () {
-             $('.dropdown-menu').toggle(); // Toggle the display of the dropdown menu
-         });
-     });
-</script>
-
+            $(document).ready(function () {
+                $('#dropdownToggle').click(function () {
+                    $('.dropdown-menu').toggle(); // Toggle the display of the dropdown menu
+                });
+            });
+    </script>

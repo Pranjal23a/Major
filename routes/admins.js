@@ -4,6 +4,7 @@ const passport = require('passport');
 
 const adminConroller = require('../controllers/admin_controller');
 const staffController = require('../controllers/staff_controller');
+const doctorController = require('../controllers/doctor_controller');
 const inventoryController = require('../controllers/inventory_controller');
 
 router.get('/profile', passport.checkAuthentication, adminConroller.profile);
@@ -26,6 +27,10 @@ router.post('/create-session', passport.authenticate(
 // admin signup staff
 router.get('/staff/sign-up', staffController.signUp);
 router.post('/staff/create', staffController.create);
+
+// admin signup doctor
+router.get('/doctor/sign-up', doctorController.signUp);
+router.post('/doctor/create', doctorController.create);
 
 
 router.get('/sign-out', adminConroller.destroySession);

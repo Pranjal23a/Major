@@ -8,6 +8,7 @@ router.get('/profile', passport.checkAuthentication, staffController.profile);
 router.get('/sign-in', staffController.signIn);
 router.get('/search/:name', staffController.search);
 router.get('/search', staffController.Showsearch);
+router.get('/patient', staffController.patient);
 router.post('/create-session', passport.authenticate(
     'local',
     { failureRedirect: '/admin/sign-in' },

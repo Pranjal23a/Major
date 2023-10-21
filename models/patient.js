@@ -16,7 +16,7 @@ const patientSchema = new mongoose.Schema(
         },
         canvasImage: {
             type: String,
-            required: true
+            required: false
         }
     },
     {

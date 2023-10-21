@@ -2,6 +2,7 @@ const Staff = require('../models/staff');
 const Inventory = require('../models/inventory');
 const Doctor = require('../models/doctor');
 const Patient = require('../models/patient');
+const Admin = require('../models/admin');
 const client = require('twilio')('AC3cac2f780654d7f7f67303bbbebbf85e', 'cf54357a0d2dfd154e0e4e4866e6d4c6');
 
 // Doctor Profile 
@@ -23,10 +24,16 @@ module.exports.profile = async function (req, res) {
 
 
 // doctor signup page
-module.exports.signUp = function (req, res) {
-    return res.render('doctor_sign_up', {
-        title: "SignUp"
-    })
+module.exports.signUp = async function (req, res) {
+    const User = await Admin.findOne({ _id: req.user.id });
+    if (User) {
+        return res.render('doctor_sign_up', {
+            title: "SignUp"
+        })
+    }
+    else {
+        return res.redirect('back');
+    }
 }
 
 
@@ -102,11 +109,11 @@ module.exports.addPatient = async function (req, res) {
             }
         }
 
-        const { name, number, canvasImage } = req.body;
+        const { name, number } = req.body;
+        let canvasImage = req.body.canvasImage || '';
 
         // sending sms to user
-        sendSMS(name, number, token)
-
+        sendSMS(name, number, token);
         // Create the patient with the unique token
         Patient.create({ token, name, number, canvasImage });
 

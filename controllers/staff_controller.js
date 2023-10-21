@@ -1,6 +1,7 @@
 const Staff = require('../models/staff');
 const Inventory = require('../models/inventory');
 const Patient = require('../models/patient');
+const Admin = require('../models/admin');
 // Staff Profile 
 module.exports.profile = async function (req, res) {
     const User = await Staff.findOne({ _id: req.user.id });
@@ -21,8 +22,9 @@ module.exports.profile = async function (req, res) {
 //  Patient Data
 module.exports.patient = async function (req, res) {
     const patient = await Patient.find({}).sort({ createdAt: -1 });
+    const User = await Staff.findOne({ _id: req.user.id });
     // Check for admin login
-    if (patient) {
+    if (patient && User) {
         return res.render('staff_view_patient', {
             title: 'Patient Details',
             reports: patient,
@@ -86,10 +88,16 @@ module.exports.create = async function (req, res) {
 
 
 // staff signup page
-module.exports.signUp = function (req, res) {
-    return res.render('staff_sign_up', {
-        title: "SignUp"
-    })
+module.exports.signUp = async function (req, res) {
+    const User = await Admin.findOne({ _id: req.user.id });
+    if (User) {
+        return res.render('staff_sign_up', {
+            title: "SignUp"
+        })
+    }
+    else {
+        return res.redirect('back');
+    }
 }
 
 

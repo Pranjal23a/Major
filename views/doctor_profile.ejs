@@ -47,6 +47,8 @@
                 let isDrawing = false;
                 let isErasing = false;
                 let penColor = '#ffffff';
+                let dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                $('#canvasImage').val(dataURL);
 
                 $('#canvas').on('mousedown', function (e) {
                     isDrawing = true;
@@ -71,7 +73,7 @@
                 $('#canvas').on('mouseup', function () {
                     isDrawing = false;
                     context.closePath();
-                    const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                    dataURL = canvas.toDataURL('image/jpeg', 0.8);
                     $('#canvasImage').val(dataURL);
                 });
 

@@ -36,22 +36,44 @@
                     <th>Report Image</th>
                 </thead>
                 <tbody>
-                    <% for(report of reports){%>
-                        <tr>
-                            <td>
-                                <%= report.token %>
-                            </td>
-                            <td>
-                                <%= report.name%>
-                            </td>
-                            <td>
-                                <%= report.number %>
-                            </td>
-                            <td>
-                                <a target="_blank" href="<%= report.canvasImage %>">Report</a>
-                            </td>
-                        </tr>
-                        <% } %>
+                    <% let i=1; %>
+                        <% for(report of reports){%>
+                            <tr>
+                                <td>
+                                    <%= report.token %>
+                                </td>
+                                <td>
+                                    <%= report.name%>
+                                </td>
+                                <td>
+                                    <%= report.number %>
+                                </td>
+                                <td>
+                                    <div class="modal fade" id="myModal<%=i%>" role="dialog">
+                                        <div class="modal-dialog modal-xl">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    <button type="button" class="close"
+                                                        data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Name: <%= report.name%>
+                                                    </h4>
+                                                    <hr>
+                                                    <p class="modal-title">Token: <%= report.token%>
+                                                    </p>
+                                                    <p><a target="_blank" href="<%= report.canvasImage %>">Report</a>
+                                                    </p>
+                                                    <hr>
+                                                    <img src="<%= report.canvasImage%>" alt="reportimage">
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
+                                        data-target="#myModal<%=i%>">Report</button>
+                                </td>
+                            </tr>
+                            <% i++; } %>
                 </tbody>
             </table>
         </div>

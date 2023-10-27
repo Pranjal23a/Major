@@ -72,7 +72,7 @@ module.exports.removeinventory = async function (req, res) {
             }
         }
         // Generate the PDF and get the file path
-        const pdfFilePath = await createSellInfoPDF(req.user._id, medicineIds, stocks, req.body.buyer_name, req.body.mobile_number);
+        const pdfFilePath = await createSellInfoPDF(req.user._id, medicineIds, stocks, req.body.buyer_name, req.body.mobile_number, req.user.name);
 
         if (req.xhr) {
             return res.status(200).json({
@@ -92,7 +92,7 @@ module.exports.removeinventory = async function (req, res) {
     }
 }
 
-async function createSellInfoPDF(userId, medicineIds, stocks, name, mobile) {
+async function createSellInfoPDF(userId, medicineIds, stocks, name, mobile, sellername) {
     const pdfFilePath = `sell_info_${userId}.pdf`;
     const doc = new PDFDocument();
 
@@ -112,7 +112,8 @@ async function createSellInfoPDF(userId, medicineIds, stocks, name, mobile) {
         .moveDown()
         .text(`Name: ${name}`)
         .text(`Mobile Number: ${mobile}`)
-        .text(`Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}`);
+        .text(`Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}`)
+        .text(`Sell By: ${sellername}`);
 
     // Define the table headers
     const tableHeaders = ['Medicine ID', 'Name', 'Unit', 'Cost Each', 'Amount'];
@@ -141,16 +142,29 @@ async function createSellInfoPDF(userId, medicineIds, stocks, name, mobile) {
         if (data) {
             const y = tableY + (i + 1) * rowHeight;
 
+            const costEach = data.price;
+            const unit = stocks[i];
+            const amount = costEach * unit;
+
+            // Calculate GST and CGST (18% each)
+            const gst = 0.18 * amount;
+            const cgst = 0.18 * amount;
+
+            // Round off GST, CGST, and amount to two decimal places
+            const roundedGst = parseFloat(gst.toFixed(2));
+            const roundedCgst = parseFloat(cgst.toFixed(2));
+            const roundedAmount = parseFloat(amount.toFixed(2));
+
             doc
                 .font('Helvetica')
                 .fontSize(12)
                 .text(data.medicine_id, tableX, y)
                 .text(data.name, tableX + 100, y)
-                .text(stocks[i].toString(), tableX + 200, y)
-                .text(data.price.toString(), tableX + 300, y)
-                .text((data.price * stocks[i]).toString(), tableX + 400, y); // Use 'data.price * stocks[i]' for the "Money" column
+                .text(unit.toString(), tableX + 200, y)
+                .text(costEach.toString(), tableX + 300, y)
+                .text(roundedAmount.toString(), tableX + 400, y); // Use 'data.price * stocks[i]' for the "Money" column
 
-            totalAmount += data.price * stocks[i];
+            totalAmount += amount;
         }
     }
 
@@ -160,10 +174,21 @@ async function createSellInfoPDF(userId, medicineIds, stocks, name, mobile) {
         .lineTo(tableX + 600, tableY + (medicineIds.length + 1) * rowHeight) // Adjust the line width
         .stroke();
 
-    // Draw the total amount
+    // Calculate GST and CGST totals
+    const gstTotal = 0.18 * totalAmount;
+    const cgstTotal = 0.18 * totalAmount;
+
+    // Round off GST and CGST totals to two decimal places
+    const roundedGstTotal = parseFloat(gstTotal.toFixed(2));
+    const roundedCgstTotal = parseFloat(cgstTotal.toFixed(2));
+    const grandtotal = parseFloat((totalAmount + gstTotal + cgstTotal).toFixed(2));
+    // Draw the total, GST, CGST, and grand total in the desired order
     doc
         .fontSize(14)
-        .text(`Total Amount: Rs. ${totalAmount}`, tableX, tableY + (medicineIds.length + 2) * rowHeight);
+        .text(`Total: Rs. ${totalAmount}`, tableX, tableY + (medicineIds.length + 2) * rowHeight)
+        .text(`GST (18%): Rs. ${roundedGstTotal}`, tableX, tableY + (medicineIds.length + 3) * rowHeight)
+        .text(`CGST (18%): Rs. ${roundedCgstTotal}`, tableX, tableY + (medicineIds.length + 4) * rowHeight)
+        .text(`Grand Total: Rs. ${grandtotal}`, tableX, tableY + (medicineIds.length + 5) * rowHeight);
 
     // Finalize the PDF
     doc.end();
@@ -172,12 +197,14 @@ async function createSellInfoPDF(userId, medicineIds, stocks, name, mobile) {
 
 
 
+
+
 module.exports.downloadPDF = function (req, res) {
     const { userid } = req.params;
 
     // Construct the full path to the PDF file (or wherever your PDF is generated)
     const parentDirectory = path.join(__dirname, '..'); // Navigate to the parent directory
-    const filePath = path.join(parentDirectory, 'sell_info_65180db545ec4fba338901a3.pdf');
+    const filePath = path.join(parentDirectory, `sell_info_${userid}.pdf`);
     // Set the response headers for PDF
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=sell_info_${userid}.pdf`);

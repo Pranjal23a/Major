@@ -51,15 +51,17 @@
                                     placeholder="Mobile Number" required>
                                 <div class="form-style" id="inputFieldsContainer">
                                     <!-- Dynamic input fields -->
-                                    <input class="form-style-place" type="text" name="medicine_id[]"
-                                        placeholder="Medicine ID" required>
-                                    <input class="form-style-place" type="number" name="stock[]" placeholder="Unit Sell"
-                                        required>
+                                    <div class="input-set">
+                                        <input class="form-style-place" type="text" name="medicine_id[]"
+                                            placeholder="Medicine ID" required>
+                                        <input class="form-style-place" type="number" name="stock[]"
+                                            placeholder="Unit Sell" required>
+                                    </div>
 
                                     <!-- More dynamically added fields go here -->
                                 </div>
                                 <button type="button" id="addInputField">Add Item</button>
-                                <input class="enter" type="submit" value="Update">
+                                <input id="pdf_btn" class="enter" type="submit" value="Update">
                             </form>
 
                         </div>
@@ -132,20 +134,18 @@
 
             $(document).ready(function () {
                 $('#addInputField').click(function () {
-                    // Clone the initial input fields
-                    const inputFieldsContainer = $('#inputFieldsContainer');
-                    const clonedInputFields = inputFieldsContainer.clone(true);
+                    const inputSet = $('<div class="input-set">');
+                    const medicineIdInput = $('<input class="form-style-place" type="text" name="medicine_id[]" placeholder="Medicine ID" required>');
+                    const unitInput = $('<input class="form-style-place" type="number" name="stock[]" placeholder="Unit Sell" required>');
 
-                    // Clear the values of the cloned input fields
-                    clonedInputFields.find('input').val('');
+                    // Clear the input values
+                    medicineIdInput.val('');
+                    unitInput.val('');
 
-                    // Update the names of the cloned input fields with unique indexes
-                    const index = inputFieldsContainer.find('.form-style-place').length / 2; // Two inputs per item
-                    clonedInputFields.find('input[name="medicine_id[]"]').attr('name', `medicine_id[${index}]`);
-                    clonedInputFields.find('input[name="stock[]"]').attr('name', `stock[${index}]`);
-
-                    // Add the cloned input fields at the top of the form
-                    inputFieldsContainer.after(clonedInputFields);
+                    // Append the new fields to the container
+                    inputSet.append(medicineIdInput);
+                    inputSet.append(unitInput);
+                    $('#inputFieldsContainer').append(inputSet);
                 });
 
                 $('#updateInventoryForm').submit(function (event) {

@@ -3,7 +3,7 @@ const Inventory = require('../models/inventory');
 const Doctor = require('../models/doctor');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
-const client = require('twilio')('AC3cac2f780654d7f7f67303bbbebbf85e', 'cf54357a0d2dfd154e0e4e4866e6d4c6');
+const client = require('twilio')('AC3cac2f780654d7f7f67303bbbebbf85e', '');
 
 // Doctor Profile 
 module.exports.profile = async function (req, res) {
@@ -115,7 +115,8 @@ module.exports.addPatient = async function (req, res) {
         // sending sms to user
         sendSMS(name, number, token);
         // Create the patient with the unique token
-        Patient.create({ token, name, number, canvasImage });
+        const doctorName = req.user.name;
+        Patient.create({ token, name, doctorName, number, canvasImage });
 
         req.flash('success', 'Patient Report created Successfully!!');
         return res.redirect("/doctor/profile");

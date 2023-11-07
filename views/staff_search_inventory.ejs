@@ -10,17 +10,24 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <a class="navbar-brand" href=" /staff/profile">Update Inventory</a>
+                    <li class="nav-item">
+
+                        <a class="nav-link" href=" /staff/update">Sell Medicine <span
+                                class="sr-only">(current)</span></a>
+
+                    </li>
                     <li class="nav-item active">
 
                         <a class="nav-link" href=" /staff/search">Search Inventory <span
                                 class="sr-only">(current)</span></a>
+
                     </li>
                     <li class="nav-item ">
 
                         <a class="nav-link" href=" /staff/patient">View Patient <span
                                 class="sr-only">(current)</span></a>
                     </li>
+
 
                 </ul>
             </div>
@@ -46,6 +53,7 @@
                     <div id="search-results">
                         <table border="1" style="text-align: center;">
                             <thead>
+                                <th>Sno.</th>
                                 <th>Medicine ID</th>
                                 <th>Name</th>
                                 <th>Stock</th>
@@ -53,26 +61,30 @@
                                 <th>Expiry Date</th>
                             </thead>
                             <tbody>
-                                <% for(info of data){%>
-                                    <tr>
-                                        <td>
-                                            <%= info.medicine_id %>
-                                        </td>
-                                        <td>
-                                            <%= info.name%>
-                                        </td>
-                                        <td>
-                                            <%= info.stock %> U
-                                        </td>
-                                        <td>
-                                            Rs. <%= info.price %>
-                                        </td>
-                                        <td style="<%=checkExpiration(info.exp_date) %>">
-                                            <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' ,
-                                                month: 'short' , day: 'numeric' }) %>
-                                        </td>
-                                    </tr>
-                                    <% } %>
+                                <% let i=1 %>
+                                    <% for(info of data){%>
+                                        <tr>
+                                            <td>
+                                                <%= i++ %>
+                                            </td>
+                                            <td>
+                                                <%= info.medicine_id %>
+                                            </td>
+                                            <td>
+                                                <%= info.name%>
+                                            </td>
+                                            <td>
+                                                <%= info.stock %> U
+                                            </td>
+                                            <td>
+                                                Rs. <%= info.price %>
+                                            </td>
+                                            <td style="<%=checkExpiration(info.exp_date) %>">
+                                                <%= new Date(info.exp_date).toLocaleDateString('en-US', {
+                                                    year: 'numeric' , month: 'short' , day: 'numeric' }) %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
                             </tbody>
                         </table>
                     </div>

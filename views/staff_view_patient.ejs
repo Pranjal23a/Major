@@ -9,9 +9,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
-                <a class="navbar-brand" href=" /staff/profile">Update Inventory</a>
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                     <li class="nav-item">
+
+                        <a class="nav-link" href=" /staff/update">Sell Medicine <span
+                                class="sr-only">(current)</span></a>
+
+                    </li>
+                    <li class="nav-item ">
 
                         <a class="nav-link" href=" /staff/search">Search Inventory <span
                                 class="sr-only">(current)</span></a>
@@ -23,6 +28,7 @@
                                 class="sr-only">(current)</span></a>
                     </li>
 
+
                 </ul>
             </div>
         </nav>
@@ -30,6 +36,7 @@
 
             <table border="1" style="text-align: center;">
                 <thead>
+                    <th>Sno.</th>
                     <th>Token Number</th>
                     <th>Patient Name</th>
                     <th>Mobile Number</th>
@@ -40,6 +47,9 @@
                     <% let i=1; %>
                         <% for(report of reports){%>
                             <tr>
+                                <td>
+                                    <%= i %>
+                                </td>
                                 <td>
                                     <%= report.token %>
                                 </td>

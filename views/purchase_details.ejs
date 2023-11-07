@@ -8,8 +8,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                    <a class="navbar-brand" href=" /admin/profile">Add Inventory</a>
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item ">
+
+                            <a class="nav-link " href=" /admin/add-inventory">Add Inventory <span
+                                    class="sr-only">(current)</span></a>
+                        </li>
                         <li class="nav-item">
 
                             <a class="nav-link" href=" /admin/search">Search Inventory <span
@@ -17,62 +21,94 @@
                         </li>
                         <li class="nav-item active">
 
-                            <a class="nav-link" href=" /admin/profile/selldata">Details</a>
+                            <a class="nav-link" href=" /admin/selldata">Selling Details</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href=" /admin/staff/sign-up">Add Staff </button></a>
+                            <a class="nav-link" href=" /admin/staff-sign-up">Add Staff </button></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href=" /admin/doctor/sign-up">Add Doctor </button></a>
+                            <a class="nav-link" href=" /admin/doctor-sign-up">Add Doctor </button></a>
                         </li>
                     </ul>
                 </div>
             </nav>
         </div>
-        <div class="title-edit">
-            <h1>Purchase Details</h1>
-        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="title-edit">
+                        <h1>Selling Details</h1>
+                    </div>
+                    <div class="form-container">
+                        <form id="dateForm">
+                            <div class="form-style">
+                                <input class="form-style-place" type="date" id="startDate" required>
+                                <input class="form-style-place" type="date" id="endDate" required>
+                                <button class="enter" type="submit">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div id="sellData">
 
-        <table border="1" style="text-align: center;">
-            <thead>
-                <th>Medicine ID</th>
-                <th>Name</th>
-                <th>Unit Sell</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Sell By</th>
-            </thead>
-            <tbody>
-                <% for(info of data){%>
-                    <tr>
-                        <td>
-                            <%= info.medicine_id %>
-                        </td>
-                        <td>
-                            <%= info.name%>
-                        </td>
-                        <td>
-                            <%= info.unit %>
-                        </td>
-                        <td>
-                            Rs. <%= info.amount %>
-                        </td>
-                        <td>
-                            <%= new Date(info.date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
-                                day: 'numeric' }) %>
-                        </td>
-                        <td>
-                            <%= info.user.name %>
-                        </td>
-                    </tr>
-                    <% } %>
-            </tbody>
-        </table>
+                        <table border="1" style="text-align: center;">
+                            <thead>
+                                <th>Sno.</th>
+                                <th>Medicine ID</th>
+                                <th>Name</th>
+                                <th>Unit Sell</th>
+                                <th>Discount </th>
+                                <th>GST </th>
+                                <th>Amount (Rs.)</th>
+                                <th>Sell On</th>
+                                <th>Sell By</th>
+                            </thead>
+                            <tbody>
+                                <% let i=1 %>
+                                    <% for(info of data){%>
+                                        <tr>
+                                            <td>
+                                                <%= i %>
+                                            </td>
+                                            <td>
+                                                <%= info.medicine_id %>
+                                            </td>
+                                            <td>
+                                                <%= info.name%>
+                                            </td>
+                                            <td>
+                                                <%= info.unit %>
+                                            </td>
+                                            <td>
+                                                <%= info.discount %> %
+                                            </td>
+                                            <td>
+                                                <%= info.gst %> %
+                                            </td>
+                                            <td>
+                                                <%=parseFloat(info.amount.toFixed(2)) %>
+                                            </td>
+                                            <td>
+                                                <%= new Date(info.date).toLocaleDateString('en-US', { year: 'numeric' ,
+                                                    month: 'short' , day: 'numeric' }) %>
+                                            </td>
+                                            <td>
+                                                <%= info.user.name %>
+                                            </td>
+                                        </tr>
+                                        <% i++;} %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <% } %>
 
 
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <script>
         <% function checkExpiration(expDate) {
@@ -93,4 +129,74 @@
                         $('.dropdown-menu').toggle(); // Toggle the display of the dropdown menu
                     });
                 });
+            $(document).ready(function () {
+                const dateForm = $('#dateForm');
+                const sellData = $('#sellData');
+                const startDateInput = $('#startDate');
+                const endDateInput = $('#endDate');
+
+                dateForm.submit(function (event) {
+                    event.preventDefault();
+
+                    const startDate = startDateInput.val();
+                    const endDate = endDateInput.val();
+
+                    $.ajax({
+                        type: 'GET',
+                        url: `/admin/selldata/${startDate}/${endDate}`,
+                        dataType: 'json',
+                        success: function (data) {
+                            updateSellData(data);
+                        },
+                        error: function (error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                });
+
+                function updateSellData(data) {
+                    sellData.empty();
+
+                    if (data.length >= 0) {
+                        const table = $('<table>').attr('border', '1').css('text-align', 'center');
+                        const thead = $('<thead>').html(`
+                <tr>
+                    <th>Sno.</th>
+                    <th>Medicine ID</th>
+                    <th>Name</th>
+                    <th>Unit Sell</th>
+                    <th>Discount</th>
+                    <th>GST </th>
+                    <th>Amount (Rs.)</th>
+                    <th>Date</th>
+                    <th>Sell On</th>
+                </tr>
+            `);
+                        const tbody = $('<tbody>');
+                        let i = 1;
+                        data.forEach(info => {
+                            const row = $('<tr>').html(`
+                    <td>${i++}</td>
+                    <td>${info.medicine_id}</td>
+                    <td>${info.name}</td>
+                    <td>${info.unit}</td>
+                    <td><%= info.discount %> %</td>
+                    <td><%= info.gst %> %</td>
+                    <td><%=parseFloat(info.amount.toFixed(2)) %></td>
+                    <td>${new Date(info.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                    <td>${info.user.name}</td>
+                `);
+                            tbody.append(row);
+                        });
+
+                        table.append(thead);
+                        table.append(tbody);
+                        sellData.append(table);
+                    } else {
+                        sellData.text('No data available for the selected date range.');
+                    }
+                }
+            });
+
+
         </script>

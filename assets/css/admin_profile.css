@@ -143,3 +143,6 @@ tr:nth-child(even) {
 }
 
 
+.active{
+    font-size: large;
+}

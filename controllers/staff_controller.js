@@ -2,8 +2,9 @@ const Staff = require('../models/staff');
 const Inventory = require('../models/inventory');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
+const moment = require('moment');
 // Staff Profile 
-module.exports.profile = async function (req, res) {
+module.exports.update = async function (req, res) {
     const User = await Staff.findOne({ _id: req.user.id });
     let data = await Inventory.find({});
     // Check for admin login
@@ -21,12 +22,21 @@ module.exports.profile = async function (req, res) {
 
 //  Patient Data
 module.exports.patient = async function (req, res) {
+    try {
+        // Get today's date
+        const today = moment().startOf('day'); // Start of today
+
+        // Find patients created before today and delete them
+        await Patient.deleteMany({ createdAt: { $lt: today } });
+    } catch (error) {
+        console.error('Error removing patients:', error);
+    }
     const patient = await Patient.find({}).sort({ createdAt: -1 });
     const User = await Staff.findOne({ _id: req.user.id });
     // Check for admin login
     if (patient && User) {
         return res.render('staff_view_patient', {
-            title: 'Patient Details',
+            title: 'Staff Profile',
             reports: patient,
         });
     }
@@ -75,7 +85,7 @@ module.exports.create = async function (req, res) {
         if (!user) {
             await Staff.create(req.body);
             req.flash('success', 'Staff ID Created Successfully!!');
-            return res.redirect("/admin/profile");
+            return res.redirect("/admin/add-inventory");
         } else {
             req.flash('error', 'Staff Already Exists!!');
             throw new Error("User already exists");
@@ -92,7 +102,7 @@ module.exports.signUp = async function (req, res) {
     const User = await Admin.findOne({ _id: req.user.id });
     if (User) {
         return res.render('staff_sign_up', {
-            title: "SignUp"
+            title: "Staff SignUp"
         })
     }
     else {
@@ -104,17 +114,17 @@ module.exports.signUp = async function (req, res) {
 // staff Signin page
 module.exports.signIn = function (req, res) {
     if (req.isAuthenticated()) {
-        return res.redirect('/staff/profile');
+        return res.redirect('/staff/update');
     }
     return res.render('staff_sign_in', {
-        title: "SignIn"
+        title: "Staff SignIn"
     })
 }
 
 // creating session for staff on signin
 module.exports.createSession = async function (req, res) {
     req.flash('success', 'You Have SignIn Successfully!!');
-    return res.redirect('/staff/profile');
+    return res.redirect('/staff/update');
 }
 
 

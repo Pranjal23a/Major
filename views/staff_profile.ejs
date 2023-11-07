@@ -9,9 +9,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
-                <a class="navbar-brand" href=" /staff/profile">Update Inventory</a>
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                     <li class="nav-item active">
+
+                        <a class="nav-link" href=" /staff/update">Sell Medicine <span
+                                class="sr-only">(current)</span></a>
+
+                    </li>
+                    <li class="nav-item ">
 
                         <a class="nav-link" href=" /staff/search">Search Inventory <span
                                 class="sr-only">(current)</span></a>
@@ -31,36 +36,70 @@
 
 
 
-
-        <!-- isko bhi side mai as a list add krio -->
-
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
 
                     <div class="title-edit">
-                        <h3>Update Inventory</h3>
+                        <h3>Sell Medicine</h3>
                     </div>
 
                     <div class="form-container">
                         <div class="form-container">
                             <form action="/inventory/drop" method="POST">
-                                <input class="form-style-place" type="text" name="buyer_name" placeholder="Buyer's Name"
-                                    required>
-                                <input class="form-style-place" type="tel" name="mobile_number"
-                                    placeholder="Mobile Number" required>
+                                <div class="input-set">
+                                    <input class="form-style-place" type="text" name="buyer_name"
+                                        placeholder="Buyer's Name" required>
+                                    <input class="form-style-place" type="tel" name="mobile_number"
+                                        placeholder="Mobile Number" required>
+
+                                </div>
+                                <div class="input-set">
+                                    <input class="form-style-place" type="text" name="buyer_email"
+                                        placeholder="Email Address" required>
+                                    <input class="form-style-place" type="tel" name="address" placeholder="Address"
+                                        required>
+
+                                </div>
+                                <div class="input-set">
+                                    <input class="form-style-place" type="text" name="doctor_name"
+                                        placeholder="Prescribed By" required>
+                                    <select class="form-style-place" name="payment_mode" required>
+                                        <option value="" disabled selected hidden>Payment Mode</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="card">Card</option>
+                                        <option value="upi">UPI</option>
+                                    </select>
+
+                                </div>
+
+
+                                <div class="horizontal"></div>
                                 <div class="form-style" id="inputFieldsContainer">
+                                    <div class="input-set">
+                                        <div class="medicine-tag">
+                                            <h4>Medicine ID</h4>
+                                        </div>
+                                        <div class="medicine-tag">
+                                            <h4>Unit Sell</h4>
+                                        </div>
+                                    </div>
+
                                     <!-- Dynamic input fields -->
                                     <div class="input-set">
+
+
                                         <input class="form-style-place" type="text" name="medicine_id[]"
                                             placeholder="Medicine ID" required>
+
                                         <input class="form-style-place" type="number" name="stock[]"
                                             placeholder="Unit Sell" required>
+
                                     </div>
 
                                     <!-- More dynamically added fields go here -->
                                 </div>
-                                <button type="button" id="addInputField">Add Item</button>
+                                <button type="button" class="enter" id="addInputField">Add Item</button>
                                 <input id="pdf_btn" class="enter" type="submit" value="Update">
                             </form>
 
@@ -69,9 +108,10 @@
                     </div>
                 </div>
                 <div class="col">
-                    <button id="downloadPDFButton">Download Bill</button>
+                    <button class="enter" id="downloadPDFButton">Download Bill</button>
                     <table border="1" style="text-align: center;">
                         <thead>
+                            <th>Sno.</th>
                             <th>Medicine ID</th>
                             <th>Name</th>
                             <th>Stock</th>
@@ -79,26 +119,30 @@
                             <th>Expiry Date</th>
                         </thead>
                         <tbody>
-                            <% for(info of data){%>
-                                <tr>
-                                    <td>
-                                        <%= info.medicine_id %>
-                                    </td>
-                                    <td>
-                                        <%= info.name%>
-                                    </td>
-                                    <td>
-                                        <%= info.stock %> U
-                                    </td>
-                                    <td>
-                                        Rs. <%= info.price %>
-                                    </td>
-                                    <td style="<%=checkExpiration(info.exp_date) %>">
-                                        <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' ,
-                                            month: 'short' , day: 'numeric' }) %>
-                                    </td>
-                                </tr>
-                                <% } %>
+                            <% let i=1%>
+                                <% for(info of data){%>
+                                    <tr>
+                                        <td>
+                                            <%= i++ %>
+                                        </td>
+                                        <td>
+                                            <%= info.medicine_id %>
+                                        </td>
+                                        <td>
+                                            <%= info.name%>
+                                        </td>
+                                        <td>
+                                            <%= info.stock %> U
+                                        </td>
+                                        <td>
+                                            Rs. <%= info.price %>
+                                        </td>
+                                        <td style="<%=checkExpiration(info.exp_date) %>">
+                                            <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' ,
+                                                month: 'short' , day: 'numeric' }) %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
                         </tbody>
                     </table>
 

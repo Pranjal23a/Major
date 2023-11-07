@@ -4,11 +4,11 @@ const passport = require('passport');
 
 const staffController = require('../controllers/staff_controller');
 
-router.get('/profile', passport.checkAuthentication, staffController.profile);
+router.get('/update', passport.checkAuthentication, staffController.update);
 router.get('/sign-in', staffController.signIn);
 router.get('/search/:name', staffController.search);
-router.get('/search', staffController.Showsearch);
-router.get('/patient', staffController.patient);
+router.get('/search', passport.checkAuthentication, staffController.Showsearch);
+router.get('/patient', passport.checkAuthentication, staffController.patient);
 router.post('/create-session', passport.authenticate(
     'local',
     { failureRedirect: '/admin/sign-in' },

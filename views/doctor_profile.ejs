@@ -7,7 +7,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <a class="navbar-brand" href="/doctor/profile">Patient Diagnos</a>
+
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+
+                        <a class="nav-link " href="/doctor/patient-diagnosis">Patient Diagnos <span
+                                class="sr-only">(current)</span></a>
+
+                    </li>
+                </ul>
             </div>
         </nav>
 
@@ -16,22 +24,28 @@
                 <div class="title-edit">
                     <h3>Patient Information</h3>
                 </div>
-                <form id="patientForm" action="/doctor/add" method="POST" enctype="application/x-www-form-urlencoded">
-                    <div class="form-style">
-                        <input class="form-style-place" placeholder="Patient Name" type="text" name="name" required><br>
-                        <input class="form-style-place" placeholder="Patient Number" type="number" name="number"
-                            required><br>
-                        <input type="hidden" name="canvasImage" id="canvasImage">
-                        <input class="enter" type="submit" value="Submit">
-                    </div>
-                </form>
+                <div class="form-container">
+                    <form id="patientForm" action="/doctor/add" method="POST"
+                        enctype="application/x-www-form-urlencoded">
+                        <div class="form-style">
+                            <input class="form-style-place" placeholder="Patient Name" type="text" name="name"
+                                required><br>
+                            <input class="form-style-place" placeholder="Patient Number" type="number" name="number"
+                                required><br>
+                            <input type="hidden" name="canvasImage" id="canvasImage">
+                            <input class="enter" type="submit" value="Submit">
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="right-side">
                 <div id="canvas-container">
                     <div id="button-container">
-                        <button id="clearCanvas">Clear</button>
-                        <input type="color" id="penColor" value="#ffffff">
-                        <button id="eraserButton">Eraser</button>
+                        <button class="enter" id="clearCanvas">Clear</button>
+
+                        <input class="enter" type="color" id="penColor" value="#ffffff">
+
+                        <button class="enter2" id="eraserButton">Eraser</button>
                     </div>
                     <canvas id="canvas" width="800" height="600" style="background-color: black;"></canvas>
                 </div>

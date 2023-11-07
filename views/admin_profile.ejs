@@ -13,61 +13,38 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                    <a class="navbar-brand" href=" /admin/profile">Add Inventory</a>
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li class="nav-item active">
+
+                            <a class="nav-link " href=" /admin/add-inventory">Add Inventory <span
+                                    class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
 
                             <a class="nav-link" href=" /admin/search">Search Inventory <span
                                     class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
 
-                            <a class="nav-link" href=" /admin/profile/selldata">Details</a>
+                            <a class="nav-link" href=" /admin/selldata">Selling Details</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href=" /admin/staff/sign-up">Add Staff </button></a>
+                            <a class="nav-link" href=" /admin/staff-sign-up">Add Staff </button></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href=" /admin/doctor/sign-up">Add Doctor </button></a>
+                            <a class="nav-link" href=" /admin/doctor-sign-up">Add Doctor </button></a>
                         </li>
                     </ul>
                 </div>
             </nav>
         </div>
-
-        <!-- in buttons ko as a list add krio left side mai -->
-        <!-- <div class="dropdown-container">
-            <div class="container">
-                <div class="custom-dropdown">
-                    <button class="btn btn-secondary" id="dropdownToggle" type="button">
-                        Dropdown button
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-up" aria-labelledby="dropdownToggle">
-                        <a class="dropdown-item" href=" /admin/profile">Add Inventory</a>
-                        <a class="dropdown-item" href=" /admin/search">Search Inventory</a>
-                        <a class="dropdown-item" href=" /admin/profile/selldata">Details</a>
-                        <a class="dropdown-item" href=" /admin/staff/sign-up">Add Staff </button></a>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-
-
-        <!-- <div
-                <a href=" /admin/profile"><button>Add Inventory</button></a>
-                <a href=" /admin/search"><button>Search Inventory</button></a>
-                <a href=" /admin/profile/selldata"><button>Details</button></a>
-                <a href=" /admin/staff/sign-up"><button> Add Staff </button></a> -->
-
-
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
-
                     <div class="title-edit">
-                        <h3>Add Inventory</h3>
+                        <h1>Add Inventory</h1>
                     </div>
+
                     <div class="form-container">
                         <form action="/inventory/add" method="POST">
                             <div class="form-style">
@@ -78,7 +55,10 @@
                                     required>
                                 <input class="form-style-place" type="number" name="stock" placeholder="Stock Unit"
                                     required>
-                                <input class="form-style-place" type="text" name="price" placeholder="Price" required>
+                                <input class="form-style-place" type="number" name="price" placeholder="Price" required>
+                                <input class="form-style-place" type="number" name="discount" placeholder="Discount"
+                                    required>
+                                <input class="form-style-place" type="number" name="gst" placeholder="GST" required>
                                 <input class="enter" type="submit" value="Add">
                             </div>
                         </form>
@@ -92,6 +72,8 @@
                             <th>Name</th>
                             <th>Stock</th>
                             <th>Price(per Unit)</th>
+                            <th>Discount</th>
+                            <th>GST</th>
                             <th>Expiry Date</th>
                             <th></th>
                         </thead>
@@ -114,11 +96,18 @@
                                         <td>
                                             Rs. <%= info.price %>
                                         </td>
+                                        <td>
+                                            <%= info.discount %> %
+                                        </td>
+                                        <td>
+                                            <%= info.gst %> %
+                                        </td>
                                         <td style="<%=checkExpiration(info.exp_date) %>">
                                             <%= new Date(info.exp_date).toLocaleDateString('en-US', { year: 'numeric' ,
                                                 month: 'short' , day: 'numeric' }) %>
                                         </td>
-                                        <td><a href="/admin/destroy/<%= info.id %>">X</a></td>
+                                        <td><a href="/admin/destroy/<%= info.id %>"><img src="/images/delete.png"></a>
+                                        </td>
                                     </tr>
                                     <%i++ } %>
                         </tbody>

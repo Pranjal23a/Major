@@ -34,31 +34,20 @@
 
 
             </div>
-        </nav>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10"></div>
-                <div class="col-md-2">
-                    <% if(locals.user){ %>
-                        <div class="dropdow-name">
-                            <div class="dropdown-container">
-                                <div class="container">
-                                    <!-- <a class="dropdown-item" href="/admin/sign-out">Sign Out</a> -->
-
-                                    <div class="custom-dropdown">
-                                        <button class="btn btn-secondary" id="dropdownToggle" type="button">
-                                            <a class="dropdown-item" href="/admin/sign-out">Sign Out</a>
-                                        </button>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
+            <div class="inner-div">
+                <% if(locals.user){ %>
+                    <a class="signout-a" href="/admin/sign-out"><button id="dropdownToggle" type="button">
+                            Sign Out
+                        </button></a>
+                    <% } else {%>
+                        <a class="signout-a" href="/"><button id="dropdownToggle" type="button">
+                                Home
+                            </button></a>
                         <% } %>
-                </div>
             </div>
-        </div>
+        </nav>
+
+
 
 
 

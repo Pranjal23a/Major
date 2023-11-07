@@ -7,7 +7,7 @@ const staffController = require('../controllers/staff_controller');
 const doctorController = require('../controllers/doctor_controller');
 const inventoryController = require('../controllers/inventory_controller');
 
-router.get('/profile', passport.checkAuthentication, adminConroller.profile);
+router.get('/add-inventory', passport.checkAuthentication, adminConroller.profile);
 router.get('/sign-in', adminConroller.signIn);
 router.get('/sign-up', adminConroller.signUp);
 router.post('/create', adminConroller.create);
@@ -15,9 +15,10 @@ router.post('/create', adminConroller.create);
 router.get('/destroy/:id', passport.checkAuthentication, inventoryController.destroyinventory);
 
 router.get('/search/:name', adminConroller.search);
-router.get('/search', adminConroller.Showsearch);
+router.get('/search', passport.checkAuthentication, adminConroller.Showsearch);
 
-router.get('/profile/selldata', adminConroller.sellData);
+router.get('/selldata', passport.checkAuthentication, adminConroller.sellData);
+router.get('/selldata/:startDate/:endDate', adminConroller.getSellDataByDateRange);
 // use passport as a middleware to authenticate
 router.post('/create-session', passport.authenticate(
     'local',
@@ -25,11 +26,11 @@ router.post('/create-session', passport.authenticate(
 ), adminConroller.createSession);
 
 // admin signup staff
-router.get('/staff/sign-up', staffController.signUp);
+router.get('/staff-sign-up', passport.checkAuthentication, staffController.signUp);
 router.post('/staff/create', staffController.create);
 
 // admin signup doctor
-router.get('/doctor/sign-up', doctorController.signUp);
+router.get('/doctor-sign-up', passport.checkAuthentication, doctorController.signUp);
 router.post('/doctor/create', doctorController.create);
 
 

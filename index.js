@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const flash = require('connect-flash');
 const flashMware = require('./config/middleware');
+const env = require('./config/environment');
+const path = require('path');
 app.use(cors());
 
 // Used for session cookie
@@ -22,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Using aseets static file
-app.use(express.static('./assets'));
+app.use(express.static(env.asset_path));
 // extract styles and scripts from sub pages into layout
 app.set('layout extractStyles', true);
 app.set('layout extractScripts', true);
@@ -41,7 +43,7 @@ app.set('views', './views');
 // setting up the cookie session
 app.use(session({
     name: 'inventory',
-    secret: 'something',
+    secret: env.session_cookie_key,
     saveUninitialized: false,
     resave: false,
     cookie: {

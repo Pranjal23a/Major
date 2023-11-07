@@ -34,6 +34,7 @@ $(document).ready(function () {
             // Create table headers
             const thead = $('<thead>').html(`
                 <tr>
+                    <th>Sno.</th>
                     <th>Medicine ID</th>
                     <th>Name</th>
                     <th>Stock</th>
@@ -44,8 +45,10 @@ $(document).ready(function () {
 
             // Create table body
             const tbody = $('<tbody>');
+            let i = 1;
             results.forEach(info => {
                 const row = $('<tr>').html(`
+                    <td>${i++}</td>
                     <td>${info.medicine_id}</td>
                     <td>${info.name}</td>
                     <td>${info.stock} U</td>

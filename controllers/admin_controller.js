@@ -37,6 +37,7 @@ module.exports.Showsearch = async function (req, res) {
     }
 }
 module.exports.search = async function (req, res) {
+
     try {
         const searchQuery = req.params.name;
         if (searchQuery == 0) {
@@ -63,7 +64,7 @@ module.exports.sellData = async function (req, res) {
     // Check for admin login
     if (User) {
         return res.render('purchase_details', {
-            title: ' Purchase details',
+            title: ' Admin Profile',
             user: User,
             data: data
         });
@@ -72,23 +73,37 @@ module.exports.sellData = async function (req, res) {
         return res.redirect('/');
     }
 }
+module.exports.getSellDataByDateRange = async function (req, res) {
+    try {
+        const startDate = new Date(req.params.startDate);
+        const endDate = new Date(req.params.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        // Fetch sell data based on the date range
+        const sellData = await Selldata.find({ date: { $gte: startDate, $lte: endDate } }).populate('user');
+        console.log(sellData);
+        return res.json(sellData);
+    } catch (error) {
+        console.error('Error fetching sell data by date range:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 
 // Render Signin page
 module.exports.signIn = function (req, res) {
     if (req.isAuthenticated()) {
-        return res.redirect('/admin/profile');
+        return res.redirect('/admin/add-inventory');
     }
     return res.render('admin_sign_in', {
-        title: "SignIn"
+        title: "Admin SignIn"
     })
 }
 // Render SignUp page
 module.exports.signUp = function (req, res) {
     if (req.isAuthenticated()) {
-        return res.redirect('/admin/profile');
+        return res.redirect('/admin/add-inventory');
     }
     return res.render('admin_sign_up', {
-        title: "SignUp"
+        title: "Admin SignUp"
     })
 }
 
@@ -102,11 +117,11 @@ module.exports.create = async function (req, res) {
         const user = await Admin.findOne({ email: req.body.email });
         if (!user) {
             await Admin.create(req.body);
-            req.flash('success', 'User created Succesfully!!');
+            req.flash('success', 'Admin created Succesfully!!');
             return res.redirect("/admin/sign-in");
         } else {
-            req.flash('error', 'User already exists!!');
-            throw new Error("User already exists");
+            req.flash('error', 'This Admin already exists!!');
+            throw new Error("This Admin already exists");
         }
     } catch (err) {
         console.log("Error in signing up:", err);
@@ -118,7 +133,7 @@ module.exports.create = async function (req, res) {
 // sign in and create a session for the user
 module.exports.createSession = async function (req, res) {
     req.flash('success', 'You have Logged In Successfully!!');
-    return res.redirect('/admin/profile');
+    return res.redirect('/admin/add-inventory');
 }
 
 
@@ -127,7 +142,6 @@ module.exports.destroySession = async function (req, res) {
     req.logout(function (err) {
         if (err) {
             // Handle any error that occurred during logout
-            console.log(err);
             return res.redirect("/"); // or handle the error in an appropriate way
         }
         req.flash('success', 'Logged Out!!');

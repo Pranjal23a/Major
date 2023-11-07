@@ -35,9 +35,12 @@
     
     
 }
+.active{
+    font-size: large;
+}
 
 .form-style{
-    width: 300px;
+    width: 350px;
  
 }
 .form-style-place{

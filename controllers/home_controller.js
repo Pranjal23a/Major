@@ -16,17 +16,17 @@ module.exports.home = async function (req, res) {
 
         // Check for admin login
         if (adminUser) {
-            return res.redirect('/admin/profile');
+            return res.redirect('/admin/add-inventory');
         }
 
         // Check for staff login
         if (staffUser) {
-            return res.redirect('/staff/profile');
+            return res.redirect('/staff/update');
         }
 
         // check for doctor login
         if (doctorUser) {
-            return res.redirect('/doctor/profile');
+            return res.redirect('/doctor/patient-diagnosis');
         }
 
         // If neither admin nor staff, render the home page

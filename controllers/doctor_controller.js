@@ -1,9 +1,9 @@
-const Staff = require('../models/staff');
 const Inventory = require('../models/inventory');
 const Doctor = require('../models/doctor');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
-const client = require('twilio')('AC3cac2f780654d7f7f67303bbbebbf85e', '');
+const env = require('../config/environment');
+const client = require('twilio')(env.account_SID, env.auth_Token);
 
 // Doctor Profile 
 module.exports.profile = async function (req, res) {
@@ -28,7 +28,7 @@ module.exports.signUp = async function (req, res) {
     const User = await Admin.findOne({ _id: req.user.id });
     if (User) {
         return res.render('doctor_sign_up', {
-            title: "SignUp"
+            title: "Doctor SignUp"
         })
     }
     else {
@@ -40,10 +40,10 @@ module.exports.signUp = async function (req, res) {
 // doctor Signin page
 module.exports.signIn = function (req, res) {
     if (req.isAuthenticated()) {
-        return res.redirect('/doctor/profile');
+        return res.redirect('/doctor/patient-diagnosis');
     }
     return res.render('doctor_sign_in', {
-        title: "SignIn"
+        title: "Doctor SignIn"
     })
 }
 
@@ -59,7 +59,7 @@ module.exports.create = async function (req, res) {
         if (!user) {
             await Doctor.create(req.body);
             req.flash('success', 'Doctor ID Created Successfully!!');
-            return res.redirect("/doctor/profile");
+            return res.redirect("/admin/add-inventory");
         } else {
             req.flash('error', 'Doctor Already Exists!!');
             throw new Error("User already exists");
@@ -75,7 +75,7 @@ function sendSMS(name, number, token) {
     client.messages.create({
         body: `Dear ${name} your token number is ${token}, Thankyou!!`,
         to: `+91${number}`,
-        from: '+14693522747'
+        from: env.twilio_phone_number
     }).then(message => console.log(message))
         .catch(error => console.log(error))
 }
@@ -119,7 +119,7 @@ module.exports.addPatient = async function (req, res) {
         Patient.create({ token, name, doctorName, number, canvasImage });
 
         req.flash('success', 'Patient Report created Successfully!!');
-        return res.redirect("/doctor/profile");
+        return res.redirect("/doctor/patient-diagnosis");
     } catch (err) {
         console.error("Error:", err);
         req.flash('error', 'Failed to add patient report.');
@@ -133,7 +133,7 @@ module.exports.addPatient = async function (req, res) {
 // creating session for doctor on signin
 module.exports.createSession = async function (req, res) {
     req.flash('success', 'You Have SignIn Successfully!!');
-    return res.redirect('/doctor/profile');
+    return res.redirect('/doctor/patient-diagnosis');
 }
 
 
@@ -145,7 +145,7 @@ module.exports.destroySession = async function (req, res) {
             console.log(err);
             return res.redirect("/"); // or handle the error in an appropriate way
         }
-        req.flash('error', 'Logged Out Successfully!!');
+        req.flash('success', 'Logged Out Successfully!!');
         return res.redirect("/");
     });
 };

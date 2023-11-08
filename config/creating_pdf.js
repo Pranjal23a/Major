@@ -147,7 +147,7 @@ async function createSellInfoPDF(info) {
         .moveDown();
 
     const table = {
-        headers: ['Sno.', 'Medicine ID', 'Name', 'Unit', 'Cost Each', 'Discount', 'GST', 'Amount'],
+        headers: ['Sno.', 'M-ID', 'Name', 'Unit', 'Cost(Rs.)', 'Discount(%)', 'GST(%)', 'Amount(Rs.)'],
         rows: []
     };
     let x = 1;

@@ -63,10 +63,15 @@ module.exports.sellData = async function (req, res) {
     let data = await Selldata.find().populate('user');
     // Check for admin login
     if (User) {
+        let totalAmount = 0;
+        data.forEach((sell) => {
+            totalAmount += sell.amount; // Assuming 'amount' is the field to sum
+        });
         return res.render('purchase_details', {
             title: ' Admin Profile',
             user: User,
-            data: data
+            data: data,
+            totalAmount: totalAmount
         });
     }
     else {

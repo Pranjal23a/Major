@@ -6,6 +6,7 @@ const doctorController = require('../controllers/doctor_controller');
 
 router.get('/patient-diagnosis', passport.checkAuthentication, doctorController.profile);
 router.get('/sign-in', doctorController.signIn);
+router.get('/patient-details', doctorController.patients);
 
 // This is to add the canvas and patient details to database
 router.post('/add', doctorController.addPatient);

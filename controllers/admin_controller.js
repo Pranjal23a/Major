@@ -1,6 +1,8 @@
 const Admin = require('../models/admin');
+const Sell = require('../models/sell');
 const Inventory = require('../models/inventory');
 const Selldata = require('../models/sell');
+const bcrypt = require('bcrypt');
 
 // Admin proflie page
 module.exports.profile = async function (req, res) {
@@ -10,6 +12,7 @@ module.exports.profile = async function (req, res) {
     if (User) {
         return res.render('admin_profile', {
             title: 'Admin Profile',
+
             user: User,
             data: data
         });
@@ -121,6 +124,8 @@ module.exports.create = async function (req, res) {
     try {
         const user = await Admin.findOne({ email: req.body.email });
         if (!user) {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            req.body.password = hashedPassword;
             await Admin.create(req.body);
             req.flash('success', 'Admin created Succesfully!!');
             return res.redirect("/admin/sign-in");

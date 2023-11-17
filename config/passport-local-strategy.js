@@ -3,6 +3,7 @@ const Admin = require('../models/admin');
 const Staff = require('../models/staff');
 const Doctor = require('../models/doctor');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 
 // Authentication using passport
 passport.use(new LocalStrategy(
@@ -18,17 +19,17 @@ passport.use(new LocalStrategy(
             const doctorUser = await Doctor.findOne({ email: email });
 
             // Check for admin login
-            if (adminUser && adminUser.password === password) {
+            if (adminUser && await bcrypt.compare(password, adminUser.password)) {
                 return done(null, adminUser);
             }
 
             // Check for staff login
-            if (staffUser && staffUser.password === password) {
+            if (staffUser && bcrypt.compare(password, staffUser.password)) {
                 return done(null, staffUser);
             }
 
             // Check for doctor login
-            if (doctorUser && doctorUser.password === password) {
+            if (doctorUser && bcrypt.compare(password, doctorUser.password)) {
                 return done(null, doctorUser);
             }
 

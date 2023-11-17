@@ -9,12 +9,20 @@
             </div>
 
             <div class="top-nav-details">
-                <a href="#"><span>Newsletter |</span></a>
-                <a href="#"><span>Appointment |</span></a>
-                <a href="#"><span>Career |</span></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-facebook"></i> </a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
+                <% if(!locals.user){ %>
+                    <a href="/appointment/patient"><span>| Book Appointment |</span></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i> </a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <% } else {%>
+                        <div class="profile">
+
+                            <span>
+                                <%=user.name%>
+                            </span>
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </div>
+                        <% } %>
             </div>
         </div>
 

@@ -24,10 +24,10 @@
                             <a class="nav-link" href=" /admin/selldata">Selling Details</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href=" /admin/staff-sign-up">Add Staff </button></a>
+                            <a class="nav-link" href=" /admin/staff-sign-up">Staff Details</button></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href=" /admin/doctor-sign-up">Add Doctor </button></a>
+                            <a class="nav-link" href=" /admin/doctor-sign-up">Doctor Details</button></a>
                         </li>
                     </ul>
                 </div>
@@ -51,13 +51,13 @@
                 </div>
                 <div class="col-md-8">
                     <div id="sellData">
-
                         <table border="1" style="text-align: center;">
                             <thead>
                                 <th>Sno.</th>
                                 <th>Medicine ID</th>
                                 <th>Name</th>
                                 <th>Unit Sell</th>
+                                <th>Cost Each</th>
                                 <th>Discount </th>
                                 <th>GST </th>
                                 <th>Amount (Rs.)</th>
@@ -65,7 +65,8 @@
                                 <th>Sell By</th>
                             </thead>
                             <tbody>
-                                <% let i=1 %>
+
+                                <%if(data){ let i=1 %>
                                     <% for(info of data){%>
                                         <tr>
                                             <td>
@@ -78,7 +79,10 @@
                                                 <%= info.name%>
                                             </td>
                                             <td>
-                                                <%= info.unit %>
+                                                <%= info.unit %> U
+                                            </td>
+                                            <td>
+                                                Rs. <%= info.cost %>
                                             </td>
                                             <td>
                                                 <%= info.discount %> %
@@ -104,6 +108,7 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
+                                                <td></td>
                                                 <td>Total Sell:</td>
                                                 <td>
                                                     Rs. <%= Math.round(totalAmount * 100) / 100 %>
@@ -111,6 +116,7 @@
                                                 <td></td>
                                                 <td></td>
                                             </tr>
+                                            <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -178,29 +184,33 @@
                     <th>Medicine ID</th>
                     <th>Name</th>
                     <th>Unit Sell</th>
+                    <th>Cost Each</th>
                     <th>Discount</th>
                     <th>GST </th>
                     <th>Amount (Rs.)</th>
                     <th>Date</th>
-                    <th>Sell On</th>
+                    <th>Sell By</th>
                 </tr>
             `);
                         const tbody = $('<tbody>');
                         let i = 1;
-                        data.forEach(info => {
-                            const row = $('<tr>').html(`
+                        if (data) {
+                            data.forEach(info => {
+                                const row = $('<tr>').html(`
                     <td>${i++}</td>
                     <td>${info.medicine_id}</td>
                     <td>${info.name}</td>
-                    <td>${info.unit}</td>
-                    <td><%= info.discount %> %</td>
-                    <td><%= info.gst %> %</td>
-                    <td><%=parseFloat(info.amount.toFixed(2)) %></td>
+                    <td>${info.unit} U</td>
+                    <td>Rs. ${info.cost}</td>
+                    <td>${info.discount} %</td>
+                    <td>${info.gst} %</td>
+                    <td>${parseFloat(info.amount.toFixed(2))}</td>
                     <td>${new Date(info.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                     <td>${info.user.name}</td>
                 `);
-                            tbody.append(row);
-                        });
+                                tbody.append(row);
+                            });
+                        }
 
                         table.append(thead);
                         table.append(tbody);

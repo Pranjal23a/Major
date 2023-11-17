@@ -40,6 +40,7 @@
                     <th>Token Number</th>
                     <th>Patient Name</th>
                     <th>Mobile Number</th>
+                    <th>Email</th>
                     <th>Prescribed By</th>
                     <th>Report Image</th>
                 </thead>
@@ -60,7 +61,10 @@
                                     <%= report.number %>
                                 </td>
                                 <td>
-                                    <%= report.doctorName %>
+                                    <%= report.email %>
+                                </td>
+                                <td>
+                                    Dr. <%= report.doctorName %>
                                 </td>
                                 <td>
                                     <div class="modal fade" id="myModal<%=i%>" role="dialog">

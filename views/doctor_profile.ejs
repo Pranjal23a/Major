@@ -15,6 +15,12 @@
                                 class="sr-only">(current)</span></a>
 
                     </li>
+                    <li class="nav-item ">
+
+                        <a class="nav-link " href="/doctor/patient-details">Patient Details <span
+                                class="sr-only">(current)</span></a>
+
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -28,10 +34,10 @@
                     <form id="patientForm" action="/doctor/add" method="POST"
                         enctype="application/x-www-form-urlencoded">
                         <div class="form-style">
-                            <input class="form-style-place" placeholder="Patient Name" type="text" name="name"
-                                required><br>
-                            <input class="form-style-place" placeholder="Patient Number" type="number" name="number"
-                                required><br>
+                            <input class="form-style-place" placeholder="Patient Name" type="text" name="name" required>
+                            <input class="form-style-place" placeholder="Mobile Number" type="number" name="number"
+                                required>
+                            <input class="form-style-place" placeholder="Email" type="email" name="email" required>
                             <input type="hidden" name="canvasImage" id="canvasImage">
                             <input class="enter" type="submit" value="Submit">
                         </div>

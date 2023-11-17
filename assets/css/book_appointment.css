@@ -7,10 +7,11 @@
     background-size: cover; /* Adjust this property as needed */
     background-repeat: no-repeat;
     background-position: center center;
-    padding-bottom: 1rem;
+    padding-bottom: 3rem;
     
 
 }
+
 
 .title-edit{
     text-align: center;
@@ -25,12 +26,21 @@
     
 }
 
+.title-edit h3{
+    font-size: 2rem;
+    font-weight: 550;
+    color: black;
+    word-spacing: 0.1rem;
+    letter-spacing: 0.05rem;
+    
+}
+
 .form-container{
     display: flex;
     justify-content: center;
     align-items: center;
     padding-top: 1.5rem;
-    padding-bottom: 3rem;
+    
     
 }
 
@@ -67,10 +77,52 @@
     letter-spacing: 2px;
     margin-bottom: 1em;
   }
-  table {
+  
+  .enter:hover {
+    background-color: rgb(0, 0, 0);
+    color: white;
+  }
+
+
+
+  /* code:- */
+
+  .custom-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-dropdown .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: none; /* Initially hide the dropdown menu */
+}
+.custom-dropdown .dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+}
+
+.custom-dropdown .dropdown-menu a:hover {
+    background-color: #f8f8f8;
+}
+
+.dropdown-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+
+table {
     margin: 0 auto;
     text-align: center;
-    width: 80%;
 }
 
 /* Style the table header */
@@ -89,23 +141,12 @@ td {
 tr:nth-child(even) {
     background-color: #f2f2f2;
 }
-.img-clickable {
-    cursor: pointer; /* Change cursor to pointer on hover */
-    /* Add any additional styles as needed */
-  }
-  .input-set {
-    display: flex;
-    justify-content: space-between;
-    width: 35rem;
-}
 
-.input-set input,select {
-    flex: 1;
-}
-  .enter:hover {
-    background-color: rgb(0, 0, 0);
-    color: white;
-  }
-  .active{
+
+.active{
     font-size: large;
+}
+marquee{
+    color: red;
+    font-size: 1.2rem;
 }

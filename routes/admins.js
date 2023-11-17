@@ -28,10 +28,14 @@ router.post('/create-session', passport.authenticate(
 // admin signup staff
 router.get('/staff-sign-up', passport.checkAuthentication, staffController.signUp);
 router.post('/staff/create', staffController.create);
+router.post('/staff/update-password', staffController.updatePassword);
+router.get('/staff-destroy/:id', passport.checkAuthentication, staffController.destroyStaff);
 
 // admin signup doctor
 router.get('/doctor-sign-up', passport.checkAuthentication, doctorController.signUp);
 router.post('/doctor/create', doctorController.create);
+router.post('/doctor/update-password', doctorController.updatePassword);
+router.get('/doctor-destroy/:id', passport.checkAuthentication, doctorController.destroyDoctor);
 
 
 router.get('/sign-out', adminConroller.destroySession);

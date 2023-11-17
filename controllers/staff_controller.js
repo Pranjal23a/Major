@@ -3,6 +3,7 @@ const Inventory = require('../models/inventory');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
 const moment = require('moment');
+const bcrypt = require('bcrypt');
 // Staff Profile 
 module.exports.update = async function (req, res) {
     const User = await Staff.findOne({ _id: req.user.id });
@@ -78,11 +79,14 @@ module.exports.search = async function (req, res) {
 // creating a staff
 module.exports.create = async function (req, res) {
     if (req.body.password != req.body.confirm_password) {
+        req.flash('error', 'Password does not match!!');
         return res.redirect('back');
     }
     try {
         const user = await Staff.findOne({ email: req.body.email });
         if (!user) {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            req.body.password = hashedPassword;
             await Staff.create(req.body);
             req.flash('success', 'Staff ID Created Successfully!!');
             return res.redirect("/admin/add-inventory");
@@ -101,13 +105,65 @@ module.exports.create = async function (req, res) {
 module.exports.signUp = async function (req, res) {
     const User = await Admin.findOne({ _id: req.user.id });
     if (User) {
+        let staff = await Staff.find({});
         return res.render('staff_sign_up', {
-            title: "Staff SignUp"
+            title: "Staff SignUp",
+            staff: staff,
         })
     }
     else {
         return res.redirect('back');
     }
+}
+
+module.exports.destroyStaff = async function (req, res) {
+    try {
+        const staff = await Staff.findById(req.params.id);
+        if (staff) {
+            staff.deleteOne();
+            req.flash('success', 'Deleted Successfully!!');
+            res.redirect('back');
+        }
+        else {
+            req.flash('error', 'No such staff exists!!')
+            return res.redirect('back');
+        }
+    } catch (err) {
+        req.flash('error', err)
+        return res.redirect('back');
+    }
+}
+
+
+// staff update password
+module.exports.updatePassword = async function (req, res) {
+    try {
+        const email = req.body.email; // Assuming you're using body-parser middleware
+        const newPassword = req.body.password; // Get the new password from the form
+
+        // Find the user by email
+        const user = await Staff.findOne({ email: email });
+
+        if (!user) {
+            req.flash('error', 'No Staff Exists!!');
+            return res.redirect('back');
+        }
+
+        // Update the user's password
+        user.password = await bcrypt.hash(newPassword, 10);
+
+        // Save the updated user
+        await user.save();
+
+        // Redirect or send a success response
+        req.flash('success', 'Password Updated Successfully!!');
+        res.redirect('back');
+
+    } catch (error) {
+        req.flash('error', 'Some Problem there!!');
+        return res.redirect('back');
+    }
+
 }
 
 

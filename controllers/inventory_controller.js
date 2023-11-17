@@ -1,6 +1,8 @@
 const Inventory = require('../models/inventory');
 const SellInfo = require('../models/sell');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
+const reportMailer = require('../mailers/report_mailer');
 
 const path = require('path');
 const createSellInfoPDF = require('../config/creating_pdf');
@@ -61,6 +63,7 @@ module.exports.removeinventory = async function (req, res) {
                         medicine_id: medicineIds[i],
                         name: data.name,
                         unit: stocks[i],
+                        cost: data.price,
                         amount: money,
                         discount: data.discount,
                         gst: data.gst,
@@ -82,7 +85,12 @@ module.exports.removeinventory = async function (req, res) {
         let info = { userid: req.user._id, medicineIds: medicineIds, stocks: stocks, name: req.body.buyer_name, mobile: req.body.mobile_number, staff: req.user.name, email: req.body.buyer_email, address: req.body.address, doctor: req.body.doctor_name, payment: req.body.payment_mode };
         // Generate the PDF and get the file path
         const pdfFilePath = await createSellInfoPDF(info);
-
+        let data = {
+            name: req.body.buyer_name,
+            email: req.body.buyer_email,
+            user: req.user._id
+        };
+        reportMailer.sendReport(data);
         if (req.xhr) {
             return res.status(200).json({
                 data: {

@@ -70,4 +70,7 @@
     background-color: rgb(0, 0, 0);
     color: white;
   }
-  
+  .forgot-password{
+    margin-left: 10px;
+    text-decoration: underline;
+  }

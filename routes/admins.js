@@ -12,6 +12,13 @@ router.get('/sign-in', adminConroller.signIn);
 router.get('/sign-up', adminConroller.signUp);
 router.post('/create', adminConroller.create);
 
+// forgot password
+router.get('/forgot-password', adminConroller.forgotPasswordGet);
+router.post('/forgot-password', adminConroller.forgotPasswordPost);
+router.get('/reset-password/:id/:token', adminConroller.resetPasswordGet);
+router.post('/reset-password/:id/:token', adminConroller.resetPasswordPost);
+
+
 router.get('/destroy/:id', passport.checkAuthentication, inventoryController.destroyinventory);
 
 router.get('/search/:name', adminConroller.search);
@@ -28,13 +35,13 @@ router.post('/create-session', passport.authenticate(
 // admin signup staff
 router.get('/staff-sign-up', passport.checkAuthentication, staffController.signUp);
 router.post('/staff/create', staffController.create);
-router.post('/staff/update-password', staffController.updatePassword);
+router.post('/staff/update-profile', staffController.updateProfile);
 router.get('/staff-destroy/:id', passport.checkAuthentication, staffController.destroyStaff);
 
 // admin signup doctor
 router.get('/doctor-sign-up', passport.checkAuthentication, doctorController.signUp);
 router.post('/doctor/create', doctorController.create);
-router.post('/doctor/update-password', doctorController.updatePassword);
+router.post('/doctor/update-profile', doctorController.updateProfile);
 router.get('/doctor-destroy/:id', passport.checkAuthentication, doctorController.destroyDoctor);
 
 

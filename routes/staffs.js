@@ -6,6 +6,19 @@ const staffController = require('../controllers/staff_controller');
 
 router.get('/update', passport.checkAuthentication, staffController.update);
 router.get('/sign-in', staffController.signIn);
+
+
+
+
+// forgot password
+router.get('/forgot-password', staffController.forgotPasswordGet);
+router.post('/forgot-password', staffController.forgotPasswordPost);
+router.get('/reset-password/:id/:token', staffController.resetPasswordGet);
+router.post('/reset-password/:id/:token', staffController.resetPasswordPost);
+
+
+
+
 router.get('/search/:name', staffController.search);
 router.get('/search', passport.checkAuthentication, staffController.Showsearch);
 router.get('/patient', passport.checkAuthentication, staffController.patient);

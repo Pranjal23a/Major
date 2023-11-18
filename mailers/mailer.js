@@ -22,7 +22,27 @@ exports.sendReport = (data) => {
             console.log('Error in sending mail', err);
             return;
         }
-        console.log('Message Sent', info);
+        // console.log('Message Sent', info);
+        return;
+    });
+}
+
+
+exports.sendForgotPassword = (data) => {
+    let htmlString = nodeMailer.renderTemplate({ data: data }, '/forgot_password_template.ejs');
+    // const pdf = 'sell_info_' + data.user + '.pdf';
+    // const pdfFilePath = path.join(__dirname, '..', pdf);
+    nodeMailer.transporter.sendMail({
+        from: 'pransharma011@gmail.com',
+        to: data.email,
+        subject: 'Password Reset link!!',
+        html: htmlString
+    }, (err, info) => {
+        if (err) {
+            console.log('Error in sending mail', err);
+            return;
+        }
+        // console.log('Message Sent', info);
         return;
     });
 }

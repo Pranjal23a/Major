@@ -3,6 +3,9 @@ const Sell = require('../models/sell');
 const Inventory = require('../models/inventory');
 const Selldata = require('../models/sell');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const env = require('../config/environment');
+const mailer = require('../mailers/mailer');
 
 // Admin proflie page
 module.exports.profile = async function (req, res) {
@@ -114,6 +117,114 @@ module.exports.signUp = function (req, res) {
         title: "Admin SignUp"
     })
 }
+
+
+
+// forgot Password
+module.exports.forgotPasswordGet = function (req, res) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/admin/add-inventory');
+    }
+    return res.render('admin_forgot_password', {
+        title: "Forgot Password"
+    })
+}
+
+module.exports.forgotPasswordPost = async function (req, res) {
+    try {
+        const email = req.body.email;
+        const User = await Admin.findOne({ email: email });
+        if (User) {
+            const secret = env.JWT_SECRET + User.password;
+            const payload = {
+                email: User.email,
+                id: User._id
+            }
+            const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+            const link = `http://localhost:8000/admin/reset-password/${User._id}/${token}`;
+            const data = {
+                name: User.name,
+                email: User.email,
+                link: link
+            };
+            mailer.sendForgotPassword(data);
+            req.flash('success', 'Reset Password Email has been sent to you!');
+            return res.redirect('back');
+
+        }
+        else {
+            req.flash('error', 'No User found with this email ID');
+            return res.redirect('/admin/sign-in');
+        }
+
+    } catch (err) {
+        console.log("Error in reset password:", err);
+        req.flash('error', 'Unable to reset password');
+        return res.redirect("back");
+    }
+}
+
+
+// Reset Password
+module.exports.resetPasswordGet = async function (req, res) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/admin/add-inventory');
+    }
+    const { id, token } = req.params;
+    const User = await Admin.findOne({ _id: id });
+    if (User) {
+        const secret = env.JWT_SECRET + User.password;
+        try {
+            const payload = jwt.verify(token, secret);
+            return res.render('admin_reset_password', {
+                title: "Reset Password",
+                email: User.email
+            })
+        } catch (err) {
+            req.flash('error', 'Password Reset Link is no More active');
+            return res.redirect("/admin/sign-in");
+        }
+    }
+    else {
+        req.flash('error', 'No User found with this ID');
+        return res.redirect('/admin/sign-in');
+    }
+}
+module.exports.resetPasswordPost = async function (req, res) {
+
+    try {
+        const { id, token } = req.params;
+        const { password, confirm_password } = req.body;
+        const User = await Admin.findOne({ _id: id });
+        if (User) {
+            const secret = env.JWT_SECRET + User.password;
+            const payload = jwt.verify(token, secret);
+            if (password === confirm_password) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                User.password = hashedPassword;
+                await User.save();
+                req.flash('success', 'Password Successfully Reset!');
+                return res.redirect('/admin/sign-in');
+            }
+            else {
+                req.flash('success', 'Password And Confirm Password Does not match!');
+                return res.redirect('/admin/sign-in');
+            }
+        }
+        else {
+            req.flash('error', 'No User found with this ID');
+            return res.redirect('/admin/sign-in');
+        }
+
+    } catch (err) {
+        console.log("Error in reset password:", err);
+        req.flash('error', 'Unable to reset password');
+        return res.redirect("/admin/sign-in");
+    }
+}
+
+
+
 
 // get the signup data and create admin
 module.exports.create = async function (req, res) {

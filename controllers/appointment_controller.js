@@ -1,10 +1,40 @@
 const Doctor = require('../models/doctor');
+const moment = require('moment');
+const cron = require('node-cron');
+
+
+// Schedule a job to run at midnight every day
+cron.schedule('0 0 * * *', async () => {
+    try {
+        const doctors = await Doctor.find({});
+
+        // Update the check property for each patient of each doctor
+        for (const doctor of doctors) {
+            for (const patient of doctor.patients) {
+                // Check if the patient's date is not today
+                patient.check = false;
+                patient.name = '';
+                patient.mobile = '';
+                patient.email = '';
+                patient.address = '';
+            }
+            await doctor.save();
+        }
+
+        // Save the changes
+        await Promise.all(doctors.map(doctor => doctor.save()));
+
+        console.log('Daily update completed.');
+    } catch (error) {
+        console.error('Error during daily update:', error);
+    }
+});
 
 module.exports.appointment = async function (req, res) {
-    const doctor = await Doctor.find({});
+    const doctors = await Doctor.find({});
     return res.render('book_appointment', {
         title: 'Book Appointment',
-        doctor: doctor
+        doctor: doctors
     });
 }
 module.exports.details = async function (req, res) {

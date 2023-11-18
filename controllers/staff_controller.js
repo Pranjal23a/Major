@@ -4,6 +4,9 @@ const Patient = require('../models/patient');
 const Admin = require('../models/admin');
 const moment = require('moment');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const env = require('../config/environment');
+const mailer = require('../mailers/mailer');
 // Staff Profile 
 module.exports.update = async function (req, res) {
     const User = await Staff.findOne({ _id: req.user.id });
@@ -27,7 +30,7 @@ module.exports.patient = async function (req, res) {
         // Get today's date
         const today = moment().startOf('day'); // Start of today
 
-        // Find patients created before today and delete them
+        // Find patients created before to day and delete them
         await Patient.deleteMany({ createdAt: { $lt: today } });
     } catch (error) {
         console.error('Error removing patients:', error);
@@ -116,6 +119,115 @@ module.exports.signUp = async function (req, res) {
     }
 }
 
+
+
+
+// forgot Password
+module.exports.forgotPasswordGet = function (req, res) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/staff/update');
+    }
+    return res.render('staff_forgot_password', {
+        title: "Forgot Password"
+    })
+}
+
+module.exports.forgotPasswordPost = async function (req, res) {
+    try {
+        const email = req.body.email;
+        const User = await Staff.findOne({ email: email });
+        if (User) {
+            const secret = env.JWT_SECRET + User.password;
+            const payload = {
+                email: User.email,
+                id: User._id
+            }
+            const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+            const link = `http://localhost:8000/staff/reset-password/${User._id}/${token}`;
+            const data = {
+                name: User.name,
+                email: User.email,
+                link: link
+            };
+            mailer.sendForgotPassword(data);
+            req.flash('success', 'Reset Password Email has been sent to you!');
+            return res.redirect('back');
+
+        }
+        else {
+            req.flash('error', 'No User found with this email ID');
+            return res.redirect('/staff/sign-in');
+        }
+
+    } catch (err) {
+        console.log("Error in reset password:", err);
+        req.flash('error', 'Unable to reset password');
+        return res.redirect("back");
+    }
+}
+
+
+// Reset Password
+module.exports.resetPasswordGet = async function (req, res) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/staff/update');
+    }
+    const { id, token } = req.params;
+    const User = await Staff.findOne({ _id: id });
+    if (User) {
+        const secret = env.JWT_SECRET + User.password;
+        try {
+            const payload = jwt.verify(token, secret);
+            return res.render('staff_reset_password', {
+                title: "Reset Password",
+                email: User.email
+            })
+        } catch (err) {
+            req.flash('error', 'Password Reset Link is no More active');
+            return res.redirect("/staff/sign-in");
+        }
+    }
+    else {
+        req.flash('error', 'No User found with this ID');
+        return res.redirect('/staff/sign-in');
+    }
+}
+module.exports.resetPasswordPost = async function (req, res) {
+
+    try {
+        const { id, token } = req.params;
+        const { password, confirm_password } = req.body;
+        const User = await Staff.findOne({ _id: id });
+        if (User) {
+            const secret = env.JWT_SECRET + User.password;
+            const payload = jwt.verify(token, secret);
+            if (password === confirm_password) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                User.password = hashedPassword;
+                await User.save();
+                req.flash('success', 'Password Successfully Reset!');
+                return res.redirect('/staff/sign-in');
+            }
+            else {
+                req.flash('success', 'Password And Confirm Password Does not match!');
+                return res.redirect('/staff/sign-in');
+            }
+        }
+        else {
+            req.flash('error', 'No User found with this ID');
+            return res.redirect('/staff/sign-in');
+        }
+
+    } catch (err) {
+        console.log("Error in reset password:", err);
+        req.flash('error', 'Unable to reset password4');
+        return res.redirect("/staff/sign-in");
+    }
+}
+
+
+
+
 module.exports.destroyStaff = async function (req, res) {
     try {
         const staff = await Staff.findById(req.params.id);
@@ -136,31 +248,29 @@ module.exports.destroyStaff = async function (req, res) {
 
 
 // staff update password
-module.exports.updatePassword = async function (req, res) {
+module.exports.updateProfile = async function (req, res) {
     try {
-        const email = req.body.email; // Assuming you're using body-parser middleware
-        const newPassword = req.body.password; // Get the new password from the form
+        const { id, name, email } = req.body; // Get the new password from the form
 
         // Find the user by email
-        const user = await Staff.findOne({ email: email });
+        const user = await Staff.findOne({ _id: id });
 
         if (!user) {
             req.flash('error', 'No Staff Exists!!');
             return res.redirect('back');
         }
-
-        // Update the user's password
-        user.password = await bcrypt.hash(newPassword, 10);
+        user.email = email;
+        user.name = name;
 
         // Save the updated user
         await user.save();
 
         // Redirect or send a success response
-        req.flash('success', 'Password Updated Successfully!!');
+        req.flash('success', 'Staff Profile Updated Successfully!!');
         res.redirect('back');
 
     } catch (error) {
-        req.flash('error', 'Some Problem there!!');
+        req.flash('error', 'Some Problem there in updating profile!!');
         return res.redirect('back');
     }
 

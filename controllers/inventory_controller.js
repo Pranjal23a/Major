@@ -2,7 +2,7 @@ const Inventory = require('../models/inventory');
 const SellInfo = require('../models/sell');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const reportMailer = require('../mailers/report_mailer');
+const mailer = require('../mailers/mailer');
 
 const path = require('path');
 const createSellInfoPDF = require('../config/creating_pdf');
@@ -90,7 +90,7 @@ module.exports.removeinventory = async function (req, res) {
             email: req.body.buyer_email,
             user: req.user._id
         };
-        reportMailer.sendReport(data);
+        mailer.sendReport(data);
         if (req.xhr) {
             return res.status(200).json({
                 data: {

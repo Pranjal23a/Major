@@ -51,7 +51,7 @@
                                         placeholder="Password" id="password" required>
                                     <input class="form-style-place" type="password" name="confirm_password"
                                         placeholder="Confirm Password" required>
-                                    <input type="checkbox" id="showPassword" onclick="togglePasswordVisibility()">
+                                    <!-- <input type="checkbox" id="showPassword" onclick="togglePasswordVisibility()"> -->
                                     <input class="enter" type="submit" value="Sign-Up">
                                 </div>
                             </form>
@@ -88,10 +88,10 @@
                                                                 <button type="button" class="close"
                                                                     data-dismiss="modal">&times;</button>
                                                                 <div class="title-edit">
-                                                                    <h1>Update Password</h1>
+                                                                    <h1>Update Profile</h1>
                                                                 </div>
                                                                 <div class="form-container">
-                                                                    <form action="/admin/staff/update-password"
+                                                                    <form action="/admin/staff/update-profile"
                                                                         method="POST">
                                                                         <hr>
                                                                         <p class="modal-title">Email: <%= info.email%>
@@ -101,14 +101,12 @@
                                                                         <hr>
                                                                         <div class="form-style">
                                                                             <input class="form-style-place"
-                                                                                type="hidden" name="email"
-                                                                                value="<%= info.email%>">
-                                                                            <input class="form-style-place"
-                                                                                type="password" name="password"
-                                                                                placeholder="Password" required>
-                                                                            <input class="form-style-place"
-                                                                                type="password" name="confirm_password"
-                                                                                placeholder="Confirm Password" required>
+                                                                                type="hidden" name="id"
+                                                                                value="<%= info.id%>">
+                                                                            <input class="form-style-place" type="email"
+                                                                                name="email" placeholder="Email">
+                                                                            <input class="form-style-place" type="name"
+                                                                                name="name" placeholder="Name" required>
                                                                             <input class="enter" type="submit"
                                                                                 value="Update">
                                                                         </div>

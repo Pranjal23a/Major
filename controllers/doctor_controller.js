@@ -5,7 +5,8 @@ const Admin = require('../models/admin');
 const env = require('../config/environment');
 const client = require('twilio')(env.account_SID, env.auth_Token);
 const bcrypt = require('bcrypt');
-const reportMailer = require('../mailers/report_mailer');
+const jwt = require('jsonwebtoken');
+const mailer = require('../mailers/mailer');
 
 // Doctor Profile 
 module.exports.profile = async function (req, res) {
@@ -38,27 +39,102 @@ module.exports.signUp = async function (req, res) {
         return res.redirect('back');
     }
 }
-module.exports.updatePassword = async function (req, res) {
+module.exports.updateProfile = async function (req, res) {
     try {
-        const email = req.body.email; // Assuming you're using body-parser middleware
-        const newPassword = req.body.password; // Get the new password from the form
+        const id = req.body.id;
 
-        // Find the user by email
-        const user = await Doctor.findOne({ email: email });
+        // Find the doctor by email
+        const doctor = await Doctor.findOne({ _id: id });
 
-        if (!user) {
+        if (!doctor) {
             req.flash('error', 'No Doctor Exists!!');
             return res.redirect('back');
         }
+        await Doctor.findByIdAndUpdate(doctor._id, { $unset: { patients: 1 } });
+        let time = parseInt(req.body.timings); // Assuming you store timings as a string, adjust accordingly
+        let am_pm = 'AM';
+        let newTime = time;
+        if (time > 12) {
+            am_pm = 'PM';
+            newTime = time % 12;
+        }
+        if (time == 12) {
+            am_pm = 'PM';
+        }
+        const patientTimings = [];
+        let patientData = {
+            check: false,
+            name: "", // Add patient name if available
+            email: "", // Add patient email if available
+            mobile: "", // Add patient mobile if available
+            address: "", // Add patient address if available
+            am_pm: am_pm,
+            timing: newTime,
+        };
+        patientTimings.push(patientData);
+        // Create 11 patients with timings
+        for (let i = 1; i < 12; i++) {
+            if (i % 2 == 0) {
+                newTime = time;
+                let am_pm = 'AM';
+                if (time > 12) {
+                    newTime = time % 12;
+                    am_pm = 'PM';
+                }
+                if (time == 12) {
+                    am_pm = 'PM';
+                }
+                patientData = {
+                    check: false,
+                    name: "", // Add patient name if available
+                    email: "", // Add patient email if available
+                    mobile: "", // Add patient mobile if available
+                    address: "", // Add patient address if available
+                    am_pm: am_pm,
+                    timing: newTime,
+                };
+            }
+            else {
+                newTime = time;
+                let am_pm = 'AM';
+                if (time > 12) {
+                    am_pm = 'PM';
+                    newTime = time % 12;
+                }
+                if (time == 12) {
+                    am_pm = 'PM';
+                }
+                newTime = newTime + '.30';
+                patientData = {
+                    check: false,
+                    name: "", // Add patient name if available
+                    email: "", // Add patient email if available
+                    mobile: "", // Add patient mobile if available
+                    address: "", // Add patient address if available
+                    am_pm: am_pm,
+                    timing: newTime,
+                };
+                time++;
+            }
+            patientTimings.push(patientData);
+        }
+        await Doctor.findByIdAndUpdate(doctor._id, {
+            $set: {
+                name: req.body.name,
+                email: req.body.email,
+                mobile: req.body.mobile,
+                education: req.body.education,
+                specialization: req.body.specialization,
+                experience: req.body.experience,
+                fee: req.body.fee,
+                timings: req.body.timings,
+                patients: patientTimings,
+            }
+        });
 
-        // Update the user's password
-        user.password = await bcrypt.hash(newPassword, 10);
-
-        // Save the updated user
-        await user.save();
 
         // Redirect or send a success response
-        req.flash('success', 'Password Updated Successfully!!');
+        req.flash('success', 'Doctor Profile Updated Successfully!!');
         res.redirect('back');
 
     } catch (error) {
@@ -96,6 +172,115 @@ module.exports.signIn = function (req, res) {
         title: "Doctor SignIn"
     })
 }
+
+
+
+
+// forgot Password
+module.exports.forgotPasswordGet = function (req, res) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/doctor/patient-diagnosis');
+    }
+    return res.render('doctor_forgot_password', {
+        title: "Forgot Password"
+    })
+}
+
+module.exports.forgotPasswordPost = async function (req, res) {
+    try {
+        const email = req.body.email;
+        const User = await Doctor.findOne({ email: email });
+        if (User) {
+            const secret = env.JWT_SECRET + User.password;
+            const payload = {
+                email: User.email,
+                id: User._id
+            }
+            const token = jwt.sign(payload, secret, { expiresIn: '15m' });
+            const link = `http://localhost:8000/doctor/reset-password/${User._id}/${token}`;
+            const data = {
+                name: User.name,
+                email: User.email,
+                link: link
+            };
+            mailer.sendForgotPassword(data);
+            req.flash('success', 'Reset Email has been sent to you!');
+            return res.redirect('back');
+
+        }
+        else {
+            req.flash('error', 'No User found with this email ID');
+            return res.redirect('/doctor/sign-in');
+        }
+
+    } catch (err) {
+        console.log("Error in reset password:", err);
+        req.flash('error', 'Unable to reset password');
+        return res.redirect("back");
+    }
+}
+
+
+// Reset Password
+module.exports.resetPasswordGet = async function (req, res) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/doctor/patient-diagnosis');
+    }
+    const { id, token } = req.params;
+    const User = await Doctor.findOne({ _id: id });
+    if (User) {
+        try {
+            const secret = env.JWT_SECRET + User.password;
+            const payload = jwt.verify(token, secret);
+            return res.render('doctor_reset_password', {
+                title: "Reset Password",
+                email: User.email
+            })
+        } catch (err) {
+            req.flash('error', 'Password Reset Link is no More active');
+            return res.redirect("/doctor/sign-in");
+        }
+    }
+    else {
+        req.flash('error', 'No User found with this ID');
+        return res.redirect('/doctor/sign-in');
+    }
+}
+module.exports.resetPasswordPost = async function (req, res) {
+    try {
+        const { id, token } = req.params;
+        const { password, confirm_password } = req.body;
+        const User = await Doctor.findOne({ _id: id });
+        if (User) {
+            const secret = env.JWT_SECRET + User.password;
+            const payload = jwt.verify(token, secret);
+            if (password === confirm_password) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                User.password = hashedPassword;
+                await User.save();
+                req.flash('success', 'Password Successfully Reset!');
+                return res.redirect('/doctor/sign-in');
+            }
+            else {
+                req.flash('success', 'Password And Confirm Password Does not match!');
+                return res.redirect('/doctor/sign-in');
+            }
+        }
+        else {
+            req.flash('error', 'No User found with this ID');
+            return res.redirect('/doctor/sign-in');
+        }
+    } catch (err) {
+        console.log("Error in reset password:", err);
+        req.flash('error', 'Unable to reset password');
+        return res.redirect("/doctor/sign-in");
+    }
+}
+
+
+
+
+
 module.exports.patients = async function (req, res) {
     if (!req.isAuthenticated()) {
         return res.redirect('/');

@@ -8,6 +8,16 @@ router.get('/patient-diagnosis', passport.checkAuthentication, doctorController.
 router.get('/sign-in', doctorController.signIn);
 router.get('/patient-details', doctorController.patients);
 
+
+
+// forgot password
+router.get('/forgot-password', doctorController.forgotPasswordGet);
+router.post('/forgot-password', doctorController.forgotPasswordPost);
+router.get('/reset-password/:id/:token', doctorController.resetPasswordGet);
+router.post('/reset-password/:id/:token', doctorController.resetPasswordPost);
+
+
+
 // This is to add the canvas and patient details to database
 router.post('/add', doctorController.addPatient);
 router.post('/create-session', passport.authenticate(

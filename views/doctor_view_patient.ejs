@@ -35,6 +35,9 @@
                     <th>Mobile Number</th>
                     <th>Address </th>
                     <th>Timings</th>
+                    <th>Reject</th>
+                    <th>Confirm</th>
+                    <th>Edit</th>
                     <th></th>
                 </thead>
                 <tbody>
@@ -61,7 +64,28 @@
                                     <td>
                                         <%= info.timing + " " + info.am_pm %>
                                     </td>
-                                    <td><a href="/appointment/destroy-patient/<%= info.id %>"><img
+                                    <td>
+                                        <% if(!info.confirm){%>
+                                            <a href="/appointment/reject/<%= info.id %>"><img
+                                                    src="/images/wrong.png"></a>
+                                            <% } %>
+                                    </td>
+                                    <td>
+                                        <% if(!info.confirm){%>
+                                            <a href="/appointment/confirm/<%= info.id %>"><img
+                                                    src="/images/correct.png"></a>
+                                            <% }else{ %>
+                                                Confirmed!!
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <% if(!info.confirm){%>
+                                            <a href="/appointment/modify/<%= info.id %>"><img
+                                                    src="/images/edit.png"></a>
+                                            <% } %>
+                                    </td>
+                                    <td>
+                                        <a href="/appointment/destroy-patient/<%= info.id %>"><img
                                                 src="/images/delete.png"></a>
                                     </td>
                                     <% } else{%>
@@ -75,6 +99,9 @@
                                         <td>
                                             <%= info.timing + " " +info.am_pm %>
                                         </td>
+                                        <td> - </td>
+                                        <td> - </td>
+                                        <td> - </td>
                                         <td></td>
                                         <% } %>
                             </tr>

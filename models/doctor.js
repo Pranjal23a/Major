@@ -44,6 +44,9 @@ const doctorSchema = new mongoose.Schema(
                 check: {
                     type: Boolean
                 },
+                confirm: {
+                    type: Boolean
+                },
                 timing: {
                     type: String
                 },

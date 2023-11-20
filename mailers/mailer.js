@@ -46,3 +46,54 @@ exports.sendForgotPassword = (data) => {
         return;
     });
 }
+
+exports.confirmAppointment = (data) => {
+    let htmlString = nodeMailer.renderTemplate({ data: data }, '/confirm_appointment_template.ejs');
+    nodeMailer.transporter.sendMail({
+        from: 'pransharma011@gmail.com',
+        to: data.email,
+        subject: 'Appointment Confirmation Mail!!',
+        html: htmlString
+    }, (err, info) => {
+        if (err) {
+            console.log('Error in sending mail', err);
+            return;
+        }
+        // console.log('Message Sent', info);
+        return;
+    });
+}
+
+
+exports.rejectAppointment = (data) => {
+    let htmlString = nodeMailer.renderTemplate({ data: data }, '/reject_appointment_template.ejs');
+    nodeMailer.transporter.sendMail({
+        from: 'pransharma011@gmail.com',
+        to: data.email,
+        subject: 'Appointment Rejected!!',
+        html: htmlString
+    }, (err, info) => {
+        if (err) {
+            console.log('Error in sending mail', err);
+            return;
+        }
+        // console.log('Message Sent', info);
+        return;
+    });
+}
+exports.modifyAppointment = (data) => {
+    let htmlString = nodeMailer.renderTemplate({ data: data }, '/modify_appointment_template.ejs');
+    nodeMailer.transporter.sendMail({
+        from: 'pransharma011@gmail.com',
+        to: data.email,
+        subject: 'Appointment Rescheduled!!',
+        html: htmlString
+    }, (err, info) => {
+        if (err) {
+            console.log('Error in sending mail', err);
+            return;
+        }
+        // console.log('Message Sent', info);
+        return;
+    });
+}

@@ -8,4 +8,5 @@ router.get('/doctor-details', appointmentController.details);
 router.post('/create', appointmentController.create);
 router.get('/getDoctorTimings/:doctorName', appointmentController.getDoctorTimings);
 router.get('/destroy-patient/:id', appointmentController.destroyPatient);
+router.get('/confirm/:id', appointmentController.confirmAppointment);
 module.exports = router;

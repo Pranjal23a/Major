@@ -3,7 +3,7 @@ const Doctor = require('../models/doctor');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
 const env = require('../config/environment');
-const client = require('twilio')(env.account_SID, env.auth_Token);
+const sms = require('../config/twilio_sms');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mailer = require('../mailers/mailer');
@@ -64,6 +64,7 @@ module.exports.updateProfile = async function (req, res) {
         const patientTimings = [];
         let patientData = {
             check: false,
+            confirm: false,
             name: "", // Add patient name if available
             email: "", // Add patient email if available
             mobile: "", // Add patient mobile if available
@@ -86,6 +87,7 @@ module.exports.updateProfile = async function (req, res) {
                 }
                 patientData = {
                     check: false,
+                    confirm: false,
                     name: "", // Add patient name if available
                     email: "", // Add patient email if available
                     mobile: "", // Add patient mobile if available
@@ -107,6 +109,7 @@ module.exports.updateProfile = async function (req, res) {
                 newTime = newTime + '.30';
                 patientData = {
                     check: false,
+                    confirm: false,
                     name: "", // Add patient name if available
                     email: "", // Add patient email if available
                     mobile: "", // Add patient mobile if available
@@ -320,6 +323,7 @@ module.exports.create = async function (req, res) {
             const patientTimings = [];
             let patientData = {
                 check: false,
+                confirm: false,
                 name: "", // Add patient name if available
                 email: "", // Add patient email if available
                 mobile: "", // Add patient mobile if available
@@ -342,6 +346,7 @@ module.exports.create = async function (req, res) {
                     }
                     patientData = {
                         check: false,
+                        confirm: false,
                         name: "", // Add patient name if available
                         email: "", // Add patient email if available
                         mobile: "", // Add patient mobile if available
@@ -363,6 +368,7 @@ module.exports.create = async function (req, res) {
                     newTime = newTime + '.30';
                     patientData = {
                         check: false,
+                        confirm: false,
                         name: "", // Add patient name if available
                         email: "", // Add patient email if available
                         mobile: "", // Add patient mobile if available
@@ -386,16 +392,6 @@ module.exports.create = async function (req, res) {
         console.log("Error in signing up:", err);
         return res.redirect("back");
     }
-}
-
-// send sms function
-function sendSMS(name, number, token) {
-    client.messages.create({
-        body: `Dear ${name} your token number is ${token}, Thankyou!!`,
-        to: `+91${number}`,
-        from: env.twilio_phone_number
-    }).then(message => { })
-        .catch(error => { })
 }
 
 
@@ -434,7 +430,7 @@ module.exports.addPatient = async function (req, res) {
         let canvasImage = req.body.canvasImage || '';
 
         // sending sms to user
-        sendSMS(name, number, token);
+        sms.tokenSms(name, number, token);
         // Create the patient with the unique token
         const doctorName = req.user.name;
         Patient.create({ token, name, doctorName, email, number, canvasImage });

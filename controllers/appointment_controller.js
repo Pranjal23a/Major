@@ -1,6 +1,8 @@
 const Doctor = require('../models/doctor');
 const moment = require('moment');
 const cron = require('node-cron');
+const mailer = require('../mailers/mailer');
+const sms = require('../config/twilio_sms');
 
 
 // Schedule a job to run at midnight every day
@@ -13,6 +15,7 @@ cron.schedule('0 0 * * *', async () => {
             for (const patient of doctor.patients) {
                 // Check if the patient's date is not today
                 patient.check = false;
+                patient.confirm = false;
                 patient.name = '';
                 patient.mobile = '';
                 patient.email = '';
@@ -55,6 +58,7 @@ module.exports.create = async function (req, res) {
         const selectedTiming = selectedDoctor.patients.find(patient => patient.timing === timings);
         if (selectedTiming) {
             selectedTiming.check = true;
+            selectedTiming.confirm = false;
             selectedTiming.name = name;
             selectedTiming.email = email;
             selectedTiming.mobile = mobile;
@@ -95,6 +99,40 @@ module.exports.getDoctorTimings = async function (req, res) {
 }
 
 
+// confirm patient appointment
+module.exports.confirmAppointment = async function (req, res) {
+    const id = req.params.id;
+    const doctor = await Doctor.findOne({ _id: req.user.id });
+    const patientIndex = doctor.patients.findIndex(patient => {
+        return patient.id === id;
+    });
+    if (patientIndex !== -1) {
+        doctor.patients[patientIndex].confirm = true;
+        await doctor.save();
+        const name = doctor.patients[patientIndex].name;
+        const email = doctor.patients[patientIndex].email;
+        const number = doctor.patients[patientIndex].mobile;
+        const time = doctor.patients[patientIndex].timing + " " + doctor.patients[patientIndex].am_pm;
+        const data = {
+            name: name,
+            email: email,
+            time: time
+        }
+        mailer.confirmAppointment(data);
+        sms.smsConfirmAppointment(name, number, time);
+        req.flash('success', 'Appointment Confirmed Successfully!!');
+        res.redirect('back');
+
+    } else {
+        req.flash('error', 'Unable to confirm appointment!!')
+        return res.redirect('back');
+    }
+}
+
+
+
+
+
 // Destroy Patient 
 module.exports.destroyPatient = async function (req, res) {
     try {
@@ -105,6 +143,7 @@ module.exports.destroyPatient = async function (req, res) {
         });
         if (patientIndex !== -1) {
             doctor.patients[patientIndex].check = false;
+            doctor.patients[patientIndex].confirm = false;
             doctor.patients[patientIndex].name = '';
             doctor.patients[patientIndex].email = '';
             doctor.patients[patientIndex].mobile = '';

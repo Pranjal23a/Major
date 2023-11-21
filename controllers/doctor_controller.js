@@ -10,35 +10,45 @@ const mailer = require('../mailers/mailer');
 
 // Doctor Profile 
 module.exports.profile = async function (req, res) {
-    const User = await Doctor.findOne({ _id: req.user.id });
-    let data = await Inventory.find({});
-    // Check for doctor login
-    if (User) {
-        return res.render('doctor_profile', {
-            title: 'Doctor Profile',
-            user: User,
-            data: data
-        });
-    }
-    else {
-        return res.redirect('/');
+    try {
+        const user = await Doctor.findOne({ _id: req.user.id });
+        if (user) {
+            const data = await Inventory.find({});
+            return res.render('doctor_profile', {
+                title: 'Doctor Profile',
+                user: user,
+                data: data
+            });
+        } else {
+            return res.redirect('/');
+        }
+    } catch (err) {
+        console.error('Error in profile:', err);
+        return res.status(500).send('Internal Server Error');
     }
 }
 
 // doctor signup page
 module.exports.signUp = async function (req, res) {
-    const User = await Admin.findOne({ _id: req.user.id });
-    if (User) {
-        let doctor = await Doctor.find({});
-        return res.render('doctor_sign_up', {
-            title: "Doctor SignUp",
-            doctor: doctor
-        })
-    }
-    else {
-        return res.redirect('back');
+    try {
+        const user = await Admin.findOne({ _id: req.user.id });
+        if (user) {
+            const doctor = await Doctor.find({});
+            return res.render('doctor_sign_up', {
+                title: "Doctor SignUp",
+                doctor: doctor
+            });
+        } else {
+            return res.redirect('back');
+        }
+    } catch (err) {
+        console.error('Error in signUp:', err);
+        return res.status(500).send('Internal Server Error');
     }
 }
+
+
+
 module.exports.updateProfile = async function (req, res) {
     try {
         const id = req.body.id;
@@ -141,6 +151,7 @@ module.exports.updateProfile = async function (req, res) {
         res.redirect('back');
 
     } catch (error) {
+        console.error('Error in updateProfile:', error);
         req.flash('error', 'Some Problem there!!');
         return res.redirect('back');
     }
@@ -151,7 +162,7 @@ module.exports.destroyDoctor = async function (req, res) {
     try {
         const doctor = await Doctor.findById(req.params.id);
         if (doctor) {
-            doctor.deleteOne();
+            await doctor.deleteOne();
             req.flash('success', 'Deleted Successfully!!');
             res.redirect('back');
         }
@@ -160,6 +171,7 @@ module.exports.destroyDoctor = async function (req, res) {
             return res.redirect('back');
         }
     } catch (err) {
+        console.error('Error in Removing Doctor:', err);
         req.flash('error', err)
         return res.redirect('back');
     }
@@ -167,27 +179,38 @@ module.exports.destroyDoctor = async function (req, res) {
 
 
 // doctor Signin page
+// Doctor Sign In
 module.exports.signIn = function (req, res) {
-    if (req.isAuthenticated()) {
-        return res.redirect('/doctor/patient-diagnosis');
+    try {
+        if (req.isAuthenticated()) {
+            return res.redirect('/doctor/patient-diagnosis');
+        }
+        return res.render('doctor_sign_in', {
+            title: "Doctor SignIn"
+        });
+    } catch (err) {
+        console.error('Error in signIn:', err);
+        return res.status(500).send('Internal Server Error');
     }
-    return res.render('doctor_sign_in', {
-        title: "Doctor SignIn"
-    })
 }
 
 
 
-
-// forgot Password
+// Doctor Forgot Password Render
 module.exports.forgotPasswordGet = function (req, res) {
-    if (req.isAuthenticated()) {
-        return res.redirect('/doctor/patient-diagnosis');
+    try {
+        if (req.isAuthenticated()) {
+            return res.redirect('/doctor/patient-diagnosis');
+        }
+        return res.render('doctor_forgot_password', {
+            title: "Forgot Password"
+        });
+    } catch (err) {
+        console.error('Error in forgotPasswordGet:', err);
+        return res.status(500).send('Internal Server Error');
     }
-    return res.render('doctor_forgot_password', {
-        title: "Forgot Password"
-    })
 }
+
 
 module.exports.forgotPasswordPost = async function (req, res) {
     try {
@@ -224,31 +247,40 @@ module.exports.forgotPasswordPost = async function (req, res) {
 }
 
 
-// Reset Password
+// Reset Password Page render
 module.exports.resetPasswordGet = async function (req, res) {
-    if (req.isAuthenticated()) {
-        return res.redirect('/doctor/patient-diagnosis');
-    }
-    const { id, token } = req.params;
-    const User = await Doctor.findOne({ _id: id });
-    if (User) {
-        try {
-            const secret = env.JWT_SECRET + User.password;
-            const payload = jwt.verify(token, secret);
-            return res.render('doctor_reset_password', {
-                title: "Reset Password",
-                email: User.email
-            })
-        } catch (err) {
-            req.flash('error', 'Password Reset Link is no More active');
-            return res.redirect("/doctor/sign-in");
+    try {
+        if (req.isAuthenticated()) {
+            return res.redirect('/doctor/patient-diagnosis');
         }
-    }
-    else {
-        req.flash('error', 'No User found with this ID');
-        return res.redirect('/doctor/sign-in');
+        const { id, token } = req.params;
+        const User = await Doctor.findOne({ _id: id });
+        if (User) {
+            try {
+                const secret = env.JWT_SECRET + User.password;
+                const payload = jwt.verify(token, secret);
+                return res.render('doctor_reset_password', {
+                    title: "Reset Password",
+                    email: User.email
+                })
+            } catch (err) {
+                req.flash('error', 'Password Reset Link is no More active');
+                return res.redirect("/doctor/sign-in");
+            }
+        }
+        else {
+            req.flash('error', 'No User found with this ID');
+            return res.redirect('/doctor/sign-in');
+        }
+    } catch (error) {
+        console.error('Error in resetPasswordGet:', err);
+        return res.status(500).send('Internal Server Error');
     }
 }
+
+
+
+// Doctor Reset Password Post
 module.exports.resetPasswordPost = async function (req, res) {
     try {
         const { id, token } = req.params;
@@ -265,7 +297,7 @@ module.exports.resetPasswordPost = async function (req, res) {
                 return res.redirect('/doctor/sign-in');
             }
             else {
-                req.flash('success', 'Password And Confirm Password Does not match!');
+                req.flash('success', 'Password And Confirm Password do not match!');
                 return res.redirect('/doctor/sign-in');
             }
         }
@@ -273,9 +305,15 @@ module.exports.resetPasswordPost = async function (req, res) {
             req.flash('error', 'No User found with this ID');
             return res.redirect('/doctor/sign-in');
         }
-    } catch (err) {
-        console.log("Error in reset password:", err);
-        req.flash('error', 'Unable to reset password');
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            req.flash('error', 'Password Reset Link has expired');
+        } else if (error.name === 'JsonWebTokenError') {
+            req.flash('error', 'Invalid Token');
+        } else {
+            req.flash('error', 'Unable to reset password');
+        }
+        console.log("Error in reset password:", error);
         return res.redirect("/doctor/sign-in");
     }
 }
@@ -283,26 +321,39 @@ module.exports.resetPasswordPost = async function (req, res) {
 
 
 
-
+// Doctor View Patient Page render
 module.exports.patients = async function (req, res) {
-    if (!req.isAuthenticated()) {
+    try {
+        if (!req.isAuthenticated()) {
+            return res.redirect('/');
+        }
+        const doctor = await Doctor.findOne({ _id: req.user.id });
+        if (!doctor) {
+            throw new Error('Doctor not found');
+        }
+        const timingsPatient = doctor.patients.filter(patient => !patient.check);
+        return res.render('doctor_view_patient', {
+            title: "Patient Details",
+            user: doctor,
+            timingsPatient: timingsPatient
+        });
+    } catch (error) {
+        console.error("Error in patients function:", error);
+        req.flash('error', 'Error fetching patient details');
         return res.redirect('/');
     }
-    const User = await Doctor.findOne({ _id: req.user.id });
-    return res.render('doctor_view_patient', {
-        title: "Patient Details",
-        user: User
-    })
+
 }
+
 
 
 // creating a Doctor
 module.exports.create = async function (req, res) {
-    if (req.body.password != req.body.confirm_password) {
-        req.flash('error', 'Password does not match!!');
-        return res.redirect('back');
-    }
     try {
+        if (req.body.password != req.body.confirm_password) {
+            req.flash('error', 'Password does not match!!');
+            return res.redirect('back');
+        }
         const user = await Doctor.findOne({ email: req.body.email });
         if (!user) {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -390,6 +441,7 @@ module.exports.create = async function (req, res) {
         }
     } catch (err) {
         console.log("Error in signing up:", err);
+        req.flash('error', 'Error creating doctor ID');
         return res.redirect("back");
     }
 }
@@ -433,7 +485,7 @@ module.exports.addPatient = async function (req, res) {
         sms.tokenSms(name, number, token);
         // Create the patient with the unique token
         const doctorName = req.user.name;
-        Patient.create({ token, name, doctorName, email, number, canvasImage });
+        await Patient.create({ token, name, doctorName, email, number, canvasImage });
 
         req.flash('success', 'Patient Report created Successfully!!');
         return res.redirect("/doctor/patient-diagnosis");
@@ -449,20 +501,32 @@ module.exports.addPatient = async function (req, res) {
 
 // creating session for doctor on signin
 module.exports.createSession = async function (req, res) {
-    req.flash('success', 'You Have SignIn Successfully!!');
-    return res.redirect('/doctor/patient-diagnosis');
+    try {
+        req.flash('success', 'You Have Signed In Successfully!!');
+        return res.redirect('/doctor/patient-diagnosis');
+    } catch (error) {
+        console.error("Error in createSession function:", error);
+        req.flash('error', 'Error during login');
+        return res.redirect("/doctor/sign-in");
+    }
 }
 
 
 // doctor logout
 module.exports.destroySession = async function (req, res) {
-    req.logout(function (err) {
-        if (err) {
-            // Handle any error that occurred during logout
-            console.log(err);
-            return res.redirect("/"); // or handle the error in an appropriate way
-        }
-        req.flash('success', 'Logged Out Successfully!!');
+    try {
+        req.logout(function (err) {
+            if (err) {
+                // Handle any error that occurred during logout
+                console.error(err);
+                throw new Error('Logout error');
+            }
+            req.flash('success', 'Logged Out Successfully!!');
+            return res.redirect("/");
+        });
+    } catch (error) {
+        console.error("Error in destroySession function:", error);
+        req.flash('error', 'Error logging out');
         return res.redirect("/");
-    });
-};
+    }
+}

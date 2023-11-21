@@ -2,24 +2,33 @@ const Staff = require('../models/staff');
 const Inventory = require('../models/inventory');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
-const moment = require('moment');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const env = require('../config/environment');
 const mailer = require('../mailers/mailer');
-// Staff Profile 
+
+
+
+// Staff Profile - Update Inventory or sell medicine 
 module.exports.update = async function (req, res) {
-    const User = await Staff.findOne({ _id: req.user.id });
-    let data = await Inventory.find({});
-    // Check for admin login
-    if (User) {
-        return res.render('staff_profile', {
-            title: 'Staff Profile',
-            user: User,
-            data: data
-        });
+    try {
+        const User = await Staff.findOne({ _id: req.user.id });
+        let data = await Inventory.find({});
+        // Check for admin login
+        if (User) {
+            return res.render('staff_profile', {
+                title: 'Staff Profile',
+                user: User,
+                data: data
+            });
+        }
+        else {
+            return res.redirect('/');
+        }
     }
-    else {
+    catch (error) {
+        console.error('Error in getting page:', error);
+        req.flash('error', 'Internal Server Error');
         return res.redirect('/');
     }
 }
@@ -27,44 +36,52 @@ module.exports.update = async function (req, res) {
 //  Patient Data
 module.exports.patient = async function (req, res) {
     try {
-        // Get today's date
-        const today = moment().startOf('day'); // Start of today
 
-        // Find patients created before to day and delete them
-        await Patient.deleteMany({ createdAt: { $lt: today } });
+        const patient = await Patient.find({}).sort({ createdAt: -1 });
+        const User = await Staff.findOne({ _id: req.user.id });
+
+        // Check for staff login
+        if (patient && User) {
+            return res.render('staff_view_patient', {
+                title: 'Staff Profile',
+                reports: patient,
+            });
+        } else {
+            req.flash('error', 'No patient data found');
+            return res.redirect('/');
+        }
     } catch (error) {
-        console.error('Error removing patients:', error);
-    }
-    const patient = await Patient.find({}).sort({ createdAt: -1 });
-    const User = await Staff.findOne({ _id: req.user.id });
-    // Check for admin login
-    if (patient && User) {
-        return res.render('staff_view_patient', {
-            title: 'Staff Profile',
-            reports: patient,
-        });
-    }
-    else {
+        console.error('Error in patient:', error);
+        req.flash('error', 'Internal Server Error');
         return res.redirect('/');
     }
-}
+};
 
 
+// Show Search 
 module.exports.Showsearch = async function (req, res) {
-    const User = await Staff.findOne({ _id: req.user.id });
-    let data = await Inventory.find({});
-    // Check for admin login
-    if (User) {
+    try {
+        const User = await Staff.findOne({ _id: req.user.id });
+        if (!User) {
+            req.flash('error', 'Staff user not found');
+            return res.redirect('/');
+        }
+
+        const data = await Inventory.find({});
         return res.render('staff_search_inventory', {
             title: 'Staff Profile',
             user: User,
             data: data
         });
-    }
-    else {
+    } catch (error) {
+        console.error('Error in Showsearch:', error);
+        req.flash('error', 'Internal Server Error');
         return res.redirect('/');
     }
-}
+};
+
+
+// search result
 module.exports.search = async function (req, res) {
     try {
         const searchQuery = req.params.name;
@@ -81,11 +98,11 @@ module.exports.search = async function (req, res) {
 
 // creating a staff
 module.exports.create = async function (req, res) {
-    if (req.body.password != req.body.confirm_password) {
-        req.flash('error', 'Password does not match!!');
-        return res.redirect('back');
-    }
     try {
+        if (req.body.password != req.body.confirm_password) {
+            req.flash('error', 'Password does not match!!');
+            return res.redirect('back');
+        }
         const user = await Staff.findOne({ email: req.body.email });
         if (!user) {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -106,31 +123,44 @@ module.exports.create = async function (req, res) {
 
 // staff signup page
 module.exports.signUp = async function (req, res) {
-    const User = await Admin.findOne({ _id: req.user.id });
-    if (User) {
-        let staff = await Staff.find({});
+    try {
+        const User = await Admin.findOne({ _id: req.user.id });
+        if (!User) {
+            req.flash('error', 'Admin user not found');
+            return res.redirect('back');
+        }
+
+        const staff = await Staff.find({});
         return res.render('staff_sign_up', {
             title: "Staff SignUp",
             staff: staff,
-        })
+        });
+    } catch (error) {
+        console.error('Error in signUp:', error);
+        req.flash('error', 'Internal Server Error');
+        return res.redirect('/');
     }
-    else {
-        return res.redirect('back');
-    }
-}
+};
 
 
 
 
 // forgot Password
 module.exports.forgotPasswordGet = function (req, res) {
-    if (req.isAuthenticated()) {
-        return res.redirect('/staff/update');
+    try {
+        if (req.isAuthenticated()) {
+            return res.redirect('/staff/update');
+        }
+        return res.render('staff_forgot_password', {
+            title: "Forgot Password"
+        });
+    } catch (error) {
+        console.error('Error in forgotPasswordGet:', error);
+        req.flash('error', 'Internal Server Error');
+        return res.redirect('/');
     }
-    return res.render('staff_forgot_password', {
-        title: "Forgot Password"
-    })
-}
+};
+
 
 module.exports.forgotPasswordPost = async function (req, res) {
     try {
@@ -169,31 +199,40 @@ module.exports.forgotPasswordPost = async function (req, res) {
 
 // Reset Password
 module.exports.resetPasswordGet = async function (req, res) {
-    if (req.isAuthenticated()) {
-        return res.redirect('/staff/update');
-    }
-    const { id, token } = req.params;
-    const User = await Staff.findOne({ _id: id });
-    if (User) {
-        const secret = env.JWT_SECRET + User.password;
-        try {
-            const payload = jwt.verify(token, secret);
-            return res.render('staff_reset_password', {
-                title: "Reset Password",
-                email: User.email
-            })
-        } catch (err) {
-            req.flash('error', 'Password Reset Link is no More active');
-            return res.redirect("/staff/sign-in");
+    try {
+        if (req.isAuthenticated()) {
+            return res.redirect('/staff/update');
+        }
+        const { id, token } = req.params;
+        const User = await Staff.findOne({ _id: id });
+        if (User) {
+            const secret = env.JWT_SECRET + User.password;
+            try {
+                const payload = jwt.verify(token, secret);
+                return res.render('staff_reset_password', {
+                    title: "Reset Password",
+                    email: User.email
+                })
+            } catch (err) {
+                req.flash('error', 'Password Reset Link is no More active');
+                return res.redirect("/staff/sign-in");
+            }
+        }
+        else {
+            req.flash('error', 'No User found with this ID');
+            return res.redirect('/staff/sign-in');
         }
     }
-    else {
-        req.flash('error', 'No User found with this ID');
-        return res.redirect('/staff/sign-in');
+    catch (err) {
+        console.error("Error in reset password:", err);
+        req.flash('error', 'Unable to process the request');
+        return res.redirect("/staff/sign-in");
     }
 }
-module.exports.resetPasswordPost = async function (req, res) {
 
+
+
+module.exports.resetPasswordPost = async function (req, res) {
     try {
         const { id, token } = req.params;
         const { password, confirm_password } = req.body;
@@ -218,16 +257,22 @@ module.exports.resetPasswordPost = async function (req, res) {
             return res.redirect('/staff/sign-in');
         }
 
-    } catch (err) {
-        console.log("Error in reset password:", err);
-        req.flash('error', 'Unable to reset password4');
+    } catch (error) {
+        console.log("Error in reset password:", error);
+        if (error.name === 'TokenExpiredError') {
+            req.flash('error', 'Password Reset Link has expired');
+        } else if (error.name === 'JsonWebTokenError') {
+            req.flash('error', 'Invalid Token');
+        } else {
+            req.flash('error', 'Unable to reset password');
+        }
         return res.redirect("/staff/sign-in");
     }
 }
 
 
 
-
+// Deleting Staff
 module.exports.destroyStaff = async function (req, res) {
     try {
         const staff = await Staff.findById(req.params.id);
@@ -241,7 +286,8 @@ module.exports.destroyStaff = async function (req, res) {
             return res.redirect('back');
         }
     } catch (err) {
-        req.flash('error', err)
+        console.error('Error in destroying staff:', err);
+        req.flash('error', 'An error occurred while deleting the staff')
         return res.redirect('back');
     }
 }
@@ -252,11 +298,11 @@ module.exports.updateProfile = async function (req, res) {
     try {
         const { id, name, email } = req.body; // Get the new password from the form
 
-        // Find the user by email
+        // Find the user by id
         const user = await Staff.findOne({ _id: id });
 
         if (!user) {
-            req.flash('error', 'No Staff Exists!!');
+            req.flash('error', 'No such Staff Exists!!');
             return res.redirect('back');
         }
         user.email = email;
@@ -270,6 +316,7 @@ module.exports.updateProfile = async function (req, res) {
         res.redirect('back');
 
     } catch (error) {
+        console.error('Error in updating staff profile:', error);
         req.flash('error', 'Some Problem there in updating profile!!');
         return res.redirect('back');
     }
@@ -278,31 +325,49 @@ module.exports.updateProfile = async function (req, res) {
 
 
 // staff Signin page
-module.exports.signIn = function (req, res) {
-    if (req.isAuthenticated()) {
-        return res.redirect('/staff/update');
+module.exports.signIn = async function (req, res) {
+    try {
+        if (req.isAuthenticated()) {
+            return res.redirect('/staff/update');
+        }
+        return res.render('staff_sign_in', {
+            title: "Staff SignIn"
+        });
+    } catch (error) {
+        console.error('Error in staff sign-in:', error);
+        req.flash('error', 'An error occurred during sign-in');
+        return res.redirect('/');
     }
-    return res.render('staff_sign_in', {
-        title: "Staff SignIn"
-    })
 }
 
 // creating session for staff on signin
 module.exports.createSession = async function (req, res) {
-    req.flash('success', 'You Have SignIn Successfully!!');
-    return res.redirect('/staff/update');
+    try {
+        req.flash('success', 'You Have SignIn Successfully!!');
+        return res.redirect('/staff/update');
+    } catch (error) {
+        console.error('Error creating session for staff:', error);
+        req.flash('error', 'An error occurred during sign-in');
+        return res.redirect('/');
+    }
 }
 
 
 // staff logout
 module.exports.destroySession = async function (req, res) {
-    req.logout(function (err) {
-        if (err) {
-            // Handle any error that occurred during logout
-            console.log(err);
-            return res.redirect("/"); // or handle the error in an appropriate way
-        }
-        req.flash('error', 'Logged Out Successfully!!');
+    try {
+        req.logout(function (err) {
+            if (err) {
+                // Handle any error that occurred during logout
+                console.log(err);
+                return res.redirect("/"); // or handle the error in an appropriate way
+            }
+            req.flash('error', 'Logged Out Successfully!!');
+            return res.redirect("/");
+        })
+    } catch (error) {
+        console.error('Unexpected error during logout:', error);
+        req.flash('error', 'An unexpected error occurred during logout');
         return res.redirect("/");
-    });
+    }
 };

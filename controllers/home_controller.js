@@ -35,6 +35,11 @@ module.exports.home = async function (req, res) {
         });
     } catch (err) {
         console.log("Error in home controller:", err);
+        if (err.name === 'SomeSpecificError') {
+            req.flash('error', 'An error occurred. Please try again later.');
+        } else {
+            req.flash('error', 'Unexpected error. Please contact support.');
+        }
         return res.redirect("/");
     }
 }

@@ -150,3 +150,10 @@ marquee{
     color: red;
     font-size: 1.2rem;
 }
+.img-clickable {
+    cursor: pointer; /* Change cursor to pointer on hover */
+    /* Add any additional styles as needed */
+  }
+textarea{
+    border: 2px solid black;
+}

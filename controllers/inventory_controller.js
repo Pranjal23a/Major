@@ -20,6 +20,7 @@ module.exports.addInventory = async function (req, res) {
         }
     } catch (err) {
         console.log("Error in Adding medicine to inventory", err);
+        req.flash('error', `Error in adding medicine into inventory!`);
         return res.redirect("back");
     }
 }
@@ -37,6 +38,7 @@ module.exports.destroyinventory = async function (req, res) {
             return res.redirect('back');
         }
     } catch (err) {
+        console.log("Error in removing medicine from inventory", err);
         req.flash('error', err)
         return res.redirect('back');
     }
@@ -104,7 +106,8 @@ module.exports.removeinventory = async function (req, res) {
 
         return res.redirect('back');
     } catch (err) {
-        req.flash('error', err.message);
+        req.flash('error', `Error in removing inventory!`);
+        console.error("Error in removing inventory:", err.message);
         return res.redirect('back');
     }
 }

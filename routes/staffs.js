@@ -19,8 +19,8 @@ router.post('/reset-password/:id/:token', staffController.resetPasswordPost);
 
 
 
-router.get('/search/:name', staffController.search);
-router.get('/search', passport.checkAuthentication, staffController.Showsearch);
+router.get('/search/:name', passport.checkAuthentication, staffController.search);
+router.get('/search', passport.checkAuthentication, passport.checkAuthentication, staffController.Showsearch);
 router.get('/patient', passport.checkAuthentication, staffController.patient);
 router.post('/create-session', passport.authenticate(
     'local',

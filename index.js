@@ -68,7 +68,7 @@ app.use('/', require('./routes/index'));
 
 
 // This is to run the server
-app.listen(port, function (err) {
+app.listen(process.env.Port || port, function (err) {
     if (err) {
         console.log(`Error in running the server: ${err}`);
         return;

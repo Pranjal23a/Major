@@ -1,10 +1,9 @@
 const Inventory = require('../models/inventory');
 const SellInfo = require('../models/sell');
 const fs = require('fs');
-const bcrypt = require('bcrypt');
 const mailer = require('../mailers/mailer');
+const AWS = require("aws-sdk");
 
-const path = require('path');
 const createSellInfoPDF = require('../config/creating_pdf');
 
 module.exports.addInventory = async function (req, res) {
@@ -114,26 +113,30 @@ module.exports.removeinventory = async function (req, res) {
 
 
 
+
+
 module.exports.downloadPDF = function (req, res) {
     const { userid } = req.params;
 
-    // Construct the full path to the PDF file (or wherever your PDF is generated)
-    const parentDirectory = path.join(__dirname, '..'); // Navigate to the parent directory
-    const filePath = path.join(parentDirectory, `sell_info_${userid}.pdf`);
+    // Construct the S3 key for the PDF file
+    const pdfFilePath = `sell_info_${userid}.pdf`;
 
-    // Check if the file exists
-    fs.access(filePath, fs.constants.F_OK, (err) => {
+    // Create an instance of the S3 service
+    const s3 = new AWS.S3();
+
+    // Check if the file exists in S3
+    s3.headObject({ Bucket: process.env.BUCKET, Key: pdfFilePath }, (err, metadata) => {
         if (err) {
             // If the file doesn't exist, send an error response
-            res.status(404).send('Sorry!!!!!  Bill Not Generated Yet, Try Sell some medicine.');
+            res.status(404).send('Sorry!!!!!  Bill Not Generated Yet, Try Selling some medicine.');
         } else {
             // Set the response headers for PDF
             res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename=sell_info_${userid}.pdf`);
+            res.setHeader('Content-Disposition', `attachment; filename=${pdfFilePath}`);
 
-            // Stream the file to the response
-            const fileStream = fs.createReadStream(filePath);
-            fileStream.pipe(res);
+            // Create a readable stream from S3 and pipe it to the response
+            const s3Stream = s3.getObject({ Bucket: process.env.BUCKET, Key: pdfFilePath }).createReadStream();
+            s3Stream.pipe(res);
         }
     });
 };

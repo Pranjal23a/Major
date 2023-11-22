@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Using aseets static file
-app.use(express.static(env.asset_path));
+app.use(express.static(process.env.ASSET_PATH));
 // extract styles and scripts from sub pages into layout
 app.set('layout extractStyles', true);
 app.set('layout extractScripts', true);

@@ -89,7 +89,8 @@ module.exports.removeinventory = async function (req, res) {
         let data = {
             name: req.body.buyer_name,
             email: req.body.buyer_email,
-            user: req.user._id
+            user: req.user._id,
+            pdfPath: pdfFilePath
         };
         mailer.sendReport(data);
         if (req.xhr) {

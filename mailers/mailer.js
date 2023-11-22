@@ -16,8 +16,8 @@ const sendEmail = async (mailOptions) => {
 exports.sendReport = async (data) => {
     try {
         let htmlString = nodeMailer.renderTemplate({ data: data }, '/mail_template.ejs');
-        const pdf = 'sell_info_' + data.user + '.pdf';
-        const pdfFilePath = `https://${process.env.BUCKET}.s3.amazonaws.com/${pdf}`;
+        // const pdf = 'sell_info_' + data.user + '.pdf';
+        const pdfFilePath = data.pdfPath;
         const mailOptions = {
             from: 'pransharma011@gmail.com',
             to: data.email,
@@ -27,8 +27,6 @@ exports.sendReport = async (data) => {
                 {
                     filename: 'bill.pdf',
                     path: pdfFilePath,
-                    href: pdfFilePath,
-                    encoding: 'base64',
                 }
             ]
         };

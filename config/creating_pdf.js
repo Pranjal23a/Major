@@ -184,13 +184,13 @@ async function createSellInfoPDF(info) {
         doc.moveTo(10, 135 + table.rows.length * 20 + 50).lineTo(600, 135 + table.rows.length * 20 + 50).stroke();
         const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
         doc.fontSize(14).text(`Grand Total: Rs. ${roundedTotalAmount}`, 50, 135 + table.rows.length * 20 + 80, { align: "right" });
-        writeStream.on('finish', () => {
-            console.log(`PDF created successfully: ${pdfFilePath}`);
-        });
+        // writeStream.on('finish', () => {
+        //     console.log(`PDF created successfully: ${pdfFilePath}`);
+        // });
 
-        writeStream.on('error', (error) => {
-            console.error('Error writing PDF file:', error);
-        });
+        // writeStream.on('error', (error) => {
+        //     console.error('Error writing PDF file:', error);
+        // });
         doc.end();
     } catch (error) {
         console.error('Error creating PDF:', error);

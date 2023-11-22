@@ -2,6 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const Inventory = require('../models/inventory');
 
+const AWS = require("aws-sdk");
 
 const PDFDocument = require('pdfkit');
 
@@ -123,10 +124,35 @@ class PDFDocumentWithTables extends PDFDocument {
 
 async function createSellInfoPDF(info) {
     try {
-        const pdfFilePath = `sell_info_${info.userid}.pdf`;
+        const s3 = new AWS.S3();
+
         const doc = new PDFDocumentWithTables();
-        const writeStream = fs.createWriteStream(pdfFilePath);
-        doc.pipe(writeStream);
+        const chunks = [];
+
+        doc.on('data', (chunk) => {
+            chunks.push(chunk);
+        });
+
+        doc.on('end', async () => {
+            // Concatenate all the chunks into a Buffer
+            const pdfBuffer = Buffer.concat(chunks);
+
+            const pdfFilePath = `sell_info_${info.userid}.pdf`;
+            const s3Params = {
+                Bucket: process.env.BUCKET, // Replace with your S3 bucket name
+                Key: pdfFilePath,
+                Body: pdfBuffer,
+                ContentType: 'application/pdf',
+            };
+
+            // Upload the PDF to AWS S3
+            await s3.upload(s3Params).promise();
+
+            console.log(`PDF uploaded successfully to S3: ${pdfFilePath}`);
+
+            // Optionally, you can delete the local file if it's no longer needed
+            // fs.unlinkSync(pdfFilePath);
+        });
         doc
             .fontSize(20)
             .text(`${process.env.HOSPITAL_NAME}`, 100, 15, { align: "center" })

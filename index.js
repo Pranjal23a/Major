@@ -43,7 +43,7 @@ app.set('views', './views');
 // setting up the cookie session
 app.use(session({
     name: 'inventory',
-    secret: env.session_cookie_key,
+    secret: process.env.SESSION_COOKIE_KEY,
     saveUninitialized: false,
     resave: false,
     cookie: {

@@ -8,7 +8,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const flash = require('connect-flash');
 const flashMware = require('./config/middleware');
-const env = require('./config/environment');
 const path = require('path');
 app.use(cors());
 

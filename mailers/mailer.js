@@ -27,7 +27,7 @@ exports.sendReport = async (data) => {
                 {
                     filename: 'bill.pdf',
                     path: pdfFilePath,
-                    pdfFilePath,
+                    href: pdfFilePath,
                     encoding: 'base64',
                 }
             ]

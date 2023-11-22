@@ -4,7 +4,7 @@ const development = {
     session_cookie_key: 'c2M4jEO7J5N8BHkpUrmUfVLwBDPcxbd6',
     db: 'inventory_data',
     account_SID: 'AC3cac2f780654d7f7f67303bbbebbf85e',
-    auth_Token: '8ad4ce6c4591ae00d4bbd6fd72333c1d',
+    auth_Token: '16ce5e4f56bd0b41012d326870f2d0e4',
     twilio_phone_number: '+14693522747',
     admin_key: 'D5F28',
 
@@ -33,7 +33,7 @@ const development = {
 const production = {
     name: 'production',
     asset_path: './assets',
-    session_cookie_key: 'c2M4jEO7J5N8BHkpUrmUfVLwBDPcxbd6',
+    session_cookie_key: '16ce5e4f56bd0b41012d326870f2d0e4',
     db: 'inventory_data',
     account_SID: 'AC3cac2f780654d7f7f67303bbbebbf85e',
     auth_Token: '8ad4ce6c4591ae00d4bbd6fd72333c1d',

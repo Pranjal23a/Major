@@ -1,6 +1,7 @@
+require('dotenv').config();
 const express = require("express");
 const app = express();
-const port = 8000;   //Port number at which server is running.
+const port = process.env.PORT || 8000;   //Port number at which server is running.
 const expressLayouts = require('express-ejs-layouts'); // For using layouts
 const db = require('./config/mongoose'); // Connecting to database
 const cookieParser = require('cookie-parser');
@@ -68,7 +69,7 @@ app.use('/', require('./routes/index'));
 
 
 // This is to run the server
-app.listen(process.env.Port || port, function (err) {
+app.listen(port, function (err) {
     if (err) {
         console.log(`Error in running the server: ${err}`);
         return;

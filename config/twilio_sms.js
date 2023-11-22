@@ -1,12 +1,11 @@
-const env = require('../config/environment');
-const client = require('twilio')(env.account_SID, env.auth_Token);
+const client = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
 
 const sendTwilioSMS = async (messageBody, to) => {
     try {
         const message = await client.messages.create({
             body: messageBody,
             to: to,
-            from: env.twilio_phone_number
+            from: process.env.TWILIO_PHONE_NUMBER
         });
 
         console.log(`Message sent: ${message.sid}`);

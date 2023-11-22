@@ -1,5 +1,4 @@
 const Doctor = require('../models/doctor');
-const moment = require('moment');
 const cron = require('node-cron');
 const mailer = require('../mailers/mailer');
 const sms = require('../config/twilio_sms');

@@ -1,9 +1,9 @@
+require('dotenv').config();
 const Admin = require('../models/admin');
 const Inventory = require('../models/inventory');
 const Selldata = require('../models/sell');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const env = require('../config/environment');
 const mailer = require('../mailers/mailer');
 // Admin proflie page
 module.exports.profile = async function (req, res) {
@@ -177,7 +177,7 @@ module.exports.forgotPasswordPost = async function (req, res) {
         const user = await Admin.findOne({ email: email });
 
         if (user) {
-            const secret = env.JWT_SECRET + user.password;
+            const secret = process.env.JWT_SECRET + user.password;
             const payload = {
                 email: user.email,
                 id: user._id
@@ -215,7 +215,7 @@ module.exports.resetPasswordGet = async function (req, res) {
         const user = await Admin.findOne({ _id: id });
 
         if (user) {
-            const secret = env.JWT_SECRET + user.password;
+            const secret = process.env.JWT_SECRET + user.password;
 
             try {
                 const payload = jwt.verify(token, secret);
@@ -245,7 +245,7 @@ module.exports.resetPasswordPost = async function (req, res) {
         const user = await Admin.findOne({ _id: id });
 
         if (user) {
-            const secret = env.JWT_SECRET + user.password;
+            const secret = process.env.JWT_SECRET + user.password;
 
             try {
                 const payload = jwt.verify(token, secret);
@@ -285,7 +285,7 @@ module.exports.resetPasswordPost = async function (req, res) {
 // Admin create account
 module.exports.create = async function (req, res) {
     try {
-        if (req.body.password !== req.body.confirm_password || req.body.key !== env.admin_key) {
+        if (req.body.password !== req.body.confirm_password || req.body.key !== process.env.ADMIN_KEY) {
             req.flash('error', 'Password or key does not match!!!');
             return res.redirect('back');
         }

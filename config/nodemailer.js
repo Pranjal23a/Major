@@ -1,9 +1,18 @@
+require('dotenv').config();
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const path = require('path');
-const env = require('./environment');
 
-let transporter = nodemailer.createTransport(env.smtp);
+let transporter = nodemailer.createTransport({
+    service: process.env.SMTP_SERVICE,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE === 'true', // Convert to boolean
+    auth: {
+        user: process.env.SMTP_AUTH_USER,
+        pass: process.env.SMTP_AUTH_PASS
+    }
+});
 
 let renderTemplate = (data, relativePath) => {
     let mailHTML;

@@ -1,7 +1,7 @@
+require('dotenv').config();
 const fs = require('fs');
 const Inventory = require('../models/inventory');
-const env = require('./environment');
-const pdf = require('pdf-creator-node');
+
 
 const PDFDocument = require('pdfkit');
 
@@ -128,7 +128,7 @@ async function createSellInfoPDF(info) {
         doc.pipe(fs.createWriteStream(pdfFilePath));
         doc
             .fontSize(20)
-            .text(`${env.hospital_name}`, 100, 15, { align: "center" })
+            .text(`${process.env.HOSPITAL_NAME}`, 100, 15, { align: "center" })
             .text("Customer Invoice", 100, 35, { align: "center" })
             .fontSize(10)
             .text(`Name: ${info.name}`, 50, 65, { align: "left" })
@@ -139,11 +139,11 @@ async function createSellInfoPDF(info) {
             .text(`Sell By:${info.staff}`, 50, 115, { align: "left" })
             .text(`Payment Mode:${info.payment}`, 50, 125, { align: "left" })
             .fontSize(10)
-            .text(`${env.hospital_address}`, 200, 65, { align: "right" })
-            .text(`${env.hospital_mobile}`, 200, 75, { align: "right" })
-            .text(`${env.hospital_email}`, 200, 85, { align: "right" })
-            .text(`${env.website}, `, 200, 95, { align: "right" })
-            .text(`Gst: ${env.gst_number}`, 200, 105, { align: "right" })
+            .text(`${process.env.HOSPITAL_ADDRESS}`, 200, 65, { align: "right" })
+            .text(`${process.env.HOSPITAL_MOBILE}`, 200, 75, { align: "right" })
+            .text(`${process.env.HOSPITAL_EMAIL}`, 200, 85, { align: "right" })
+            .text(`${process.env.WEBSITE}, `, 200, 95, { align: "right" })
+            .text(`Gst: ${process.env.GST_NUMBER}`, 200, 105, { align: "right" })
             .moveDown();
 
         const table = {

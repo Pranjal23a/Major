@@ -1,10 +1,10 @@
+require('dotenv').config();
 const Staff = require('../models/staff');
 const Inventory = require('../models/inventory');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const env = require('../config/environment');
 const mailer = require('../mailers/mailer');
 
 
@@ -167,7 +167,7 @@ module.exports.forgotPasswordPost = async function (req, res) {
         const email = req.body.email;
         const User = await Staff.findOne({ email: email });
         if (User) {
-            const secret = env.JWT_SECRET + User.password;
+            const secret = process.env.JWT_SECRET + User.password;
             const payload = {
                 email: User.email,
                 id: User._id
@@ -206,7 +206,7 @@ module.exports.resetPasswordGet = async function (req, res) {
         const { id, token } = req.params;
         const User = await Staff.findOne({ _id: id });
         if (User) {
-            const secret = env.JWT_SECRET + User.password;
+            const secret = process.env.JWT_SECRET + User.password;
             try {
                 const payload = jwt.verify(token, secret);
                 return res.render('staff_reset_password', {
@@ -238,7 +238,7 @@ module.exports.resetPasswordPost = async function (req, res) {
         const { password, confirm_password } = req.body;
         const User = await Staff.findOne({ _id: id });
         if (User) {
-            const secret = env.JWT_SECRET + User.password;
+            const secret = process.env.JWT_SECRET + User.password;
             const payload = jwt.verify(token, secret);
             if (password === confirm_password) {
                 const hashedPassword = await bcrypt.hash(password, 10);

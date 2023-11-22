@@ -1,8 +1,8 @@
+require('dotenv').config();
 const Inventory = require('../models/inventory');
 const Doctor = require('../models/doctor');
 const Patient = require('../models/patient');
 const Admin = require('../models/admin');
-const env = require('../config/environment');
 const sms = require('../config/twilio_sms');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -217,7 +217,7 @@ module.exports.forgotPasswordPost = async function (req, res) {
         const email = req.body.email;
         const User = await Doctor.findOne({ email: email });
         if (User) {
-            const secret = env.JWT_SECRET + User.password;
+            const secret = process.env.JWT_SECRET + User.password;
             const payload = {
                 email: User.email,
                 id: User._id
@@ -257,7 +257,7 @@ module.exports.resetPasswordGet = async function (req, res) {
         const User = await Doctor.findOne({ _id: id });
         if (User) {
             try {
-                const secret = env.JWT_SECRET + User.password;
+                const secret = process.env.JWT_SECRET + User.password;
                 const payload = jwt.verify(token, secret);
                 return res.render('doctor_reset_password', {
                     title: "Reset Password",
@@ -287,7 +287,7 @@ module.exports.resetPasswordPost = async function (req, res) {
         const { password, confirm_password } = req.body;
         const User = await Doctor.findOne({ _id: id });
         if (User) {
-            const secret = env.JWT_SECRET + User.password;
+            const secret = process.env.JWT_SECRET + User.password;
             const payload = jwt.verify(token, secret);
             if (password === confirm_password) {
                 const hashedPassword = await bcrypt.hash(password, 10);
